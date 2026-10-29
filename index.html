@@ -1,0 +1,1985 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0F1B3D">
+<meta name="mobile-web-app-capable" content="yes">
+<title>amicore</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap">
+<style>
+/* amicore: calm navy "core" card as the one bold element; everything else stays quiet. */
+@font-face { font-family: 'VazirLocal'; src: url('../fonts/vazirmatn.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+
+:root {
+  --bg: #F3F6FC;
+  --surface: #FFFFFF;
+  --surface2: #E9EEF8;
+  --ink: #0F1B3D;
+  --muted: #5F6C8C;
+  --line: #D9E0EE;
+  --navy: #0F1B3D;
+  --on-navy: #F3F6FC;
+  --navy-soft: #2A3A6B;
+  --amber: #FF8A1F;
+  --on-amber: #1B1000;
+  --mint: #19B98A;
+  --sky: #3B6BE0;
+  --rose: #D63C4B;
+  --shadow: 0 1px 2px rgba(15, 27, 61, .06), 0 6px 18px rgba(15, 27, 61, .06);
+  --font: 'VazirLocal', 'Vazirmatn', 'Noto Naskh Arabic', Tahoma, sans-serif;
+  --font-logo: 'Sora', 'Vazirmatn', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1128; --surface: #121C3A; --surface2: #1A2650; --ink: #E9EEFB; --muted: #8F9CC0; --line: #25315A;
+    --navy: #16224A; --navy-soft: #33437A; --amber: #FF9A3C; --mint: #35D3A4; --sky: #7FA2FF; --rose: #FF7A86;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1128; --surface: #121C3A; --surface2: #1A2650; --ink: #E9EEFB; --muted: #8F9CC0; --line: #25315A;
+  --navy: #16224A; --navy-soft: #33437A; --amber: #FF9A3C; --mint: #35D3A4; --sky: #7FA2FF; --rose: #FF7A86;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25); color-scheme: dark;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.7; direction: rtl; text-align: right; overscroll-behavior: none; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; padding: 0; }
+:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+h1, h2, h3, p { margin: 0; }
+svg.ic { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+
+#app { height: 100%; max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; position: relative; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: max(14px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-left, 0px)) 6px max(16px, env(safe-area-inset-right, 0px)); }
+.logo { font-family: var(--font-logo); font-weight: 700; font-size: 1.25rem; letter-spacing: -.02em; direction: ltr; }
+.logo i { font-style: normal; color: var(--amber); }
+.icon-btn { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; color: var(--muted); }
+.icon-btn:hover { background: var(--surface2); }
+main { flex: 1; min-height: 0; overflow-y: auto; padding: 8px max(16px, env(safe-area-inset-left, 0px)) 24px max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 16px; }
+main > * { flex: none; }
+
+nav.tabs { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--surface); border-top: 1px solid var(--line); padding: 6px max(8px, env(safe-area-inset-left, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-right, 0px)); }
+nav.tabs button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; color: var(--muted); font-size: .78rem; border-radius: 12px; }
+nav.tabs button[aria-current="true"] { color: var(--ink); font-weight: 700; }
+nav.tabs button[aria-current="true"] svg { color: var(--amber); }
+
+.hello { display: flex; flex-direction: column; gap: 0; }
+.hello h1 { font-size: 1.5rem; font-weight: 800; line-height: 1.4; text-wrap: balance; }
+.hello p { color: var(--muted); font-size: .92rem; }
+
+/* core card */
+.core { background: var(--navy); color: var(--on-navy); border-radius: 24px; padding: 20px; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; }
+.core .ring-wrap { position: relative; width: 150px; height: 150px; }
+.core .ring-mid { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1.2; }
+.core .ring-mid b { font-size: 2rem; font-weight: 800; }
+.core .ring-mid span { font-size: .75rem; opacity: .75; }
+.core .facts { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.fact { display: flex; align-items: center; gap: 10px; font-size: .92rem; }
+.fact svg { color: var(--amber); width: 20px; height: 20px; }
+.fact small { display: block; opacity: .7; font-size: .75rem; line-height: 1.3; }
+.fact b { font-weight: 700; }
+svg.seg-ring { width: 100%; height: 100%; }
+.seg { fill: none; stroke: var(--navy-soft); stroke-width: 12; stroke-linecap: round; }
+.seg.on { stroke: var(--amber); }
+@media (max-width: 380px) { .core { grid-template-columns: 1fr; justify-items: center; } .core .facts { width: 100%; } }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; }
+.next { display: flex; flex-direction: column; gap: 10px; }
+.next .lab { font-size: .78rem; color: var(--muted); letter-spacing: .02em; }
+.next .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.next b { font-size: 1.15rem; }
+.next .what { color: var(--muted); font-size: .92rem; overflow-wrap: anywhere; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 12px; font-weight: 700; background: var(--surface2); }
+.btn.amber { background: var(--amber); color: var(--on-amber); }
+.btn.navy { background: var(--navy); color: var(--on-navy); }
+.btn.ghost { background: transparent; border: 1px solid var(--line); }
+.btn.danger { color: var(--rose); border: 1px solid var(--rose); background: transparent; }
+.btn[disabled] { opacity: .5; cursor: default; }
+.btn.block { width: 100%; }
+
+.sec-title { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.sec-title h2 { font-size: 1.05rem; font-weight: 800; }
+.sec-title small { color: var(--muted); }
+
+.list { display: flex; flex-direction: column; }
+.item { display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); align-items: start; }
+.item:last-child { border-bottom: 0; }
+.item .box { width: 28px; height: 28px; border-radius: 9px; border: 2px solid var(--line); display: grid; place-items: center; color: transparent; margin-top: 2px; }
+.item .box svg { width: 18px; height: 18px; stroke-width: 3; }
+.item.done .box { background: var(--mint); border-color: var(--mint); color: #fff; }
+.item.done .subj, .item.done .what { opacity: .55; text-decoration: line-through; text-decoration-thickness: 1px; }
+.item .meta { min-width: 0; }
+.item .tm { direction: ltr; unicode-bidi: isolate; display: inline-block; color: var(--muted); font-size: .8rem; }
+.subj { font-weight: 700; }
+.what { color: var(--muted); font-size: .9rem; overflow-wrap: anywhere; }
+.tag { display: inline-block; font-size: .7rem; border: 1px solid currentColor; border-radius: 999px; padding: 0 8px; margin-inline-start: 8px; font-weight: 500; vertical-align: 2px; }
+.tag.review { color: var(--sky); }
+.item.rest { grid-template-columns: 30px 1fr; opacity: .75; padding: 8px 0; }
+.item.rest .box { border: 0; width: 28px; height: 28px; color: var(--muted); }
+.item.rest .subj { font-weight: 500; color: var(--muted); font-size: .9rem; }
+.item.rest .what { display: none; }
+
+.empty { text-align: center; padding: 28px 16px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.empty p { color: var(--muted); max-width: 30ch; }
+
+/* week strip */
+.strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.dayb { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0 6px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); font-size: .74rem; min-width: 0; }
+.dayb[aria-pressed="true"] { background: var(--navy); color: var(--on-navy); border-color: var(--navy); }
+.dayb.today span { color: var(--amber); font-weight: 800; }
+.dayb svg { width: 30px; height: 30px; }
+.mini-track { fill: none; stroke: var(--line); stroke-width: 4; }
+.dayb[aria-pressed="true"] .mini-track { stroke: var(--navy-soft); }
+.mini-val { fill: none; stroke: var(--amber); stroke-width: 4; stroke-linecap: round; }
+
+/* coach */
+.chat { display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 88%; padding: 10px 14px; border-radius: 16px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.assistant { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-top-right-radius: 4px; }
+.msg.user { align-self: flex-end; background: var(--navy); color: var(--on-navy); border-top-left-radius: 4px; }
+.msg.err { color: var(--rose); border-color: var(--rose); }
+.dots { display: inline-flex; gap: 5px; padding: 6px 0; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite; }
+.dots i:nth-child(2) { animation-delay: .2s; } .dots i:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .25 } 40% { opacity: 1 } }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 14px; font-size: .9rem; }
+.chip[aria-pressed="true"] { background: var(--navy); color: var(--on-navy); border-color: var(--navy); }
+.composer { display: flex; gap: 8px; align-items: flex-end; padding: 8px max(16px, env(safe-area-inset-left, 0px)) 8px max(16px, env(safe-area-inset-right, 0px)); border-top: 1px solid var(--line); background: var(--bg); }
+.composer textarea, .field input, .field textarea { flex: 1; min-width: 0; width: 100%; resize: none; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; max-height: 7.5em; direction: rtl; }
+.composer .send { width: 44px; height: 44px; border-radius: 12px; background: var(--amber); color: var(--on-amber); display: grid; place-items: center; flex: none; }
+.composer .send svg { transform: scaleX(-1); }
+
+/* progress */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px 10px; text-align: center; }
+.tile b { display: block; font-size: 1.35rem; font-weight: 800; line-height: 1.3; }
+.tile span { color: var(--muted); font-size: .78rem; }
+.bars-svg { width: 100%; height: auto; display: block; }
+.bar-plan { fill: var(--surface2); }
+.bar-done { fill: var(--amber); }
+.bar-lab { fill: var(--muted); font-size: 10px; font-family: var(--font); text-anchor: middle; }
+.bar-val { fill: var(--ink); font-size: 9px; font-family: var(--font); text-anchor: middle; }
+.subj-row { display: grid; grid-template-columns: 6.5rem 1fr 3.2rem; gap: 10px; align-items: center; padding: 6px 0; font-size: .9rem; }
+.subj-row .track { height: 10px; border-radius: 6px; background: var(--surface2); overflow: hidden; }
+.subj-row .fill { height: 100%; background: var(--sky); border-radius: 6px; }
+.subj-row small { color: var(--muted); text-align: left; }
+
+/* overlays */
+.overlay { position: absolute; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column; }
+.overlay .body { flex: 1; min-height: 0; overflow-y: auto; padding: 8px max(16px, env(safe-area-inset-left, 0px)) 24px max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 16px; }
+.overlay .foot { padding: 10px max(16px, env(safe-area-inset-left, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-right, 0px)); display: flex; gap: 10px; border-top: 1px solid var(--line); }
+.overlay .foot .btn { flex: 1; }
+.steps { display: flex; gap: 6px; padding: 0 max(16px, env(safe-area-inset-left, 0px)); }
+.steps i { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+.steps i.on { background: var(--amber); }
+.big { font-size: 1.6rem; font-weight: 800; line-height: 1.4; text-wrap: balance; }
+.lead { color: var(--muted); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label, .lab2 { font-size: .85rem; color: var(--muted); font-weight: 500; }
+.seg-ctl { display: flex; background: var(--surface2); border-radius: 12px; padding: 3px; gap: 3px; }
+.seg-ctl button { flex: 1; padding: 6px 4px; border-radius: 9px; font-size: .88rem; color: var(--muted); }
+.seg-ctl button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 700; box-shadow: var(--shadow); }
+.sub-card { display: flex; flex-direction: column; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; }
+.sub-card .hd { display: flex; justify-content: space-between; align-items: center; }
+.sub-card .hd button { color: var(--muted); }
+.range { width: 100%; accent-color: var(--amber); }
+.row-between { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.note { font-size: .85rem; color: var(--muted); }
+.status { font-size: .88rem; }
+.status.ok { color: var(--mint); } .status.bad { color: var(--rose); }
+
+/* focus */
+.focus { background: var(--navy); color: var(--on-navy); align-items: center; justify-content: center; text-align: center; gap: 22px; padding: 24px; }
+.focus .big-ring { position: relative; width: min(72vw, 300px); aspect-ratio: 1; }
+.focus .big-ring .t { position: absolute; inset: 0; display: grid; place-content: center; }
+.focus .big-ring b { font-size: 3.2rem; font-weight: 800; direction: ltr; font-variant-numeric: tabular-nums; }
+.focus .track { fill: none; stroke: var(--navy-soft); stroke-width: 10; }
+.focus .val { fill: none; stroke: var(--amber); stroke-width: 10; stroke-linecap: round; }
+.focus .acts { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.focus .btn.ghost { border-color: var(--navy-soft); color: var(--on-navy); }
+
+.toast { position: absolute; z-index: 40; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: .9rem; max-width: 90%; text-align: center; box-shadow: var(--shadow); }
+@media (prefers-reduced-motion: reduce) { .dots i { animation: none; opacity: .6; } }
+
+/* tools */
+.tools { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.tool { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: right; padding: 16px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+.tool svg { width: 26px; height: 26px; color: var(--amber); margin-bottom: 8px; }
+.tool b { font-weight: 800; }
+.tool span { color: var(--muted); font-size: .8rem; line-height: 1.5; }
+.tool:active { transform: scale(.98); }
+.badge { position: absolute; top: 12px; left: 12px; min-width: 24px; height: 24px; border-radius: 12px; padding: 0 7px; display: grid; place-items: center; background: var(--amber); color: var(--on-amber); font-style: normal; font-weight: 800; font-size: .8rem; }
+.late { color: var(--rose); }
+
+/* quiz */
+.qtext { font-size: 1.2rem; font-weight: 800; line-height: 1.7; text-wrap: balance; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { text-align: right; padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface); overflow-wrap: anywhere; }
+.opt:not([disabled]):hover { border-color: var(--navy-soft); }
+.opt.right { border-color: var(--mint); background: color-mix(in srgb, var(--mint) 16%, var(--surface)); }
+.opt.wrong { border-color: var(--rose); background: color-mix(in srgb, var(--rose) 14%, var(--surface)); }
+
+/* flashcards */
+.flash { width: 100%; min-height: 220px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; text-align: center; }
+.flash small { color: var(--muted); }
+.flash span { font-size: 1.3rem; font-weight: 800; line-height: 1.7; overflow-wrap: anywhere; }
+.flash em { font-style: normal; color: var(--muted); font-size: .85rem; }
+.flash.back { background: var(--navy); color: var(--on-navy); border-color: var(--navy); }
+.flash.back small { color: var(--amber); }
+
+/* level, goal, heatmap, badges */
+.pill { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 2px 12px 2px 10px; border-radius: 999px; background: var(--surface2); font-size: .8rem; font-weight: 700; }
+.pill svg { width: 16px; height: 16px; color: var(--amber); }
+.chip.hot { border-color: var(--amber); background: color-mix(in srgb, var(--amber) 16%, var(--surface)); font-weight: 700; }
+.core.lvl { grid-template-columns: auto 1fr; }
+.lvl-badge { width: 92px; height: 92px; border-radius: 50%; border: 6px solid var(--amber); display: grid; place-content: center; text-align: center; line-height: 1.1; }
+.lvl-badge b { font-size: 2.2rem; font-weight: 800; }
+.lvl-badge span { font-size: .72rem; opacity: .75; }
+.xpbar, .goalbar { height: 10px; border-radius: 6px; overflow: hidden; background: var(--navy-soft); }
+.goalbar { background: var(--surface2); margin: 8px 0 4px; }
+.xpbar i, .goalbar i { display: block; height: 100%; border-radius: 6px; background: var(--amber); }
+.hm { fill: var(--surface2); }
+.hm.lf { fill: transparent; stroke: var(--line); stroke-width: 1; }
+.hm.l1, .hm-dot.l1 { fill: color-mix(in srgb, var(--amber) 28%, var(--surface2)); background: color-mix(in srgb, var(--amber) 28%, var(--surface2)); }
+.hm.l2, .hm-dot.l2 { fill: color-mix(in srgb, var(--amber) 55%, var(--surface2)); background: color-mix(in srgb, var(--amber) 55%, var(--surface2)); }
+.hm.l3, .hm-dot.l3 { fill: color-mix(in srgb, var(--amber) 80%, var(--surface2)); background: color-mix(in srgb, var(--amber) 80%, var(--surface2)); }
+.hm.l4, .hm-dot.l4 { fill: var(--amber); background: var(--amber); }
+.hm-dot.l0 { background: var(--surface2); }
+.legend { display: flex; align-items: center; gap: 4px; justify-content: flex-end; font-size: .72rem; color: var(--muted); margin-top: 6px; }
+.hm-dot { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+.badges { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.badge2 { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; padding: 12px 6px; border-radius: 16px; border: 1px dashed var(--line); color: var(--muted); opacity: .6; min-width: 0; }
+.badge2 svg { width: 28px; height: 28px; }
+.badge2 b { font-size: .78rem; line-height: 1.4; }
+.badge2 span { font-size: .66rem; line-height: 1.4; }
+.badge2.on { opacity: 1; border-style: solid; border-color: var(--amber); color: var(--ink); background: color-mix(in srgb, var(--amber) 10%, var(--surface)); }
+.badge2.on svg { color: var(--amber); }
+.swatches { display: flex; gap: 12px; }
+.sw { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--surface); box-shadow: 0 0 0 1.5px var(--line); }
+.sw[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--ink); }
+.item.edit, .item.rest.edit { grid-template-columns: 30px 1fr auto; }
+.icon-btn.sm { width: 34px; height: 34px; border-radius: 10px; }
+.icon-btn.sm svg { width: 18px; height: 18px; }
+.item.moved { opacity: .55; }
+
+/* motion: only when a tab opens, never on every tap */
+.confetti { position: fixed; left: 50%; top: 62%; z-index: 80; pointer-events: none; }
+.confetti i { position: absolute; width: 8px; height: 13px; border-radius: 2px; animation: conf 1.5s cubic-bezier(.2, .7, .3, 1) forwards; }
+@keyframes conf { from { transform: translate(0, 0) rotate(0); opacity: 1; } to { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes ringin { from { transform: rotate(-70deg); opacity: .2; } to { transform: none; opacity: 1; } }
+main.enter > * { animation: rise .38s both; }
+main.enter > *:nth-child(2) { animation-delay: .05s; } main.enter > *:nth-child(3) { animation-delay: .1s; }
+main.enter > *:nth-child(4) { animation-delay: .15s; } main.enter > *:nth-child(n+5) { animation-delay: .2s; }
+main.enter .seg-ring { animation: ringin .8s cubic-bezier(.2, .7, .3, 1) both; }
+@media (prefers-reduced-motion: reduce) { main.enter > *, main.enter .seg-ring { animation: none; } }
+
+/* v3: learning tools + design polish */
+.sdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-inline-end: 7px; vertical-align: 1px; flex: none; }
+.chip .sdot { margin-inline-end: 6px; }
+.hello h1 { font-size: 1.7rem; letter-spacing: -.01em; }
+.hello .quote { margin-top: 10px; color: var(--ink); padding: 10px 14px; border-radius: 14px; background: color-mix(in srgb, var(--amber) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--amber) 28%, var(--line)); font-size: .88rem; line-height: 1.8; color: var(--ink); }
+.core { background: radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--amber) 20%, transparent), transparent 55%), radial-gradient(90% 100% at 100% 100%, color-mix(in srgb, var(--sky) 18%, transparent), transparent 60%), var(--navy); box-shadow: var(--shadow); }
+nav.tabs { margin: 0 max(10px, env(safe-area-inset-left, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right, 0px)); padding: 6px; border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); }
+nav.tabs button[aria-current="true"] { background: color-mix(in srgb, var(--amber) 16%, var(--surface)); }
+.sec-title { margin-top: 4px; }
+.tool { gap: 4px; padding: 14px; }
+.tool svg { margin: 0; }
+.tico { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: color-mix(in srgb, var(--amber) 14%, var(--surface)); border: 1px solid color-mix(in srgb, var(--amber) 22%, var(--line)); margin-bottom: 8px; }
+.tico svg { width: 24px; height: 24px; color: var(--amber); }
+.tsub { color: var(--muted); font-size: .78rem; line-height: 1.6; }
+.item.now { background: color-mix(in srgb, var(--amber) 10%, transparent); border-radius: 12px; padding-inline: 8px; margin-inline: -8px; }
+.tag.now { color: var(--on-amber); background: var(--amber); border-color: var(--amber); font-weight: 700; }
+.seg-ctl.wrap { flex-wrap: wrap; }
+.seg-ctl.wrap button { flex: 1 0 auto; padding: 6px 10px; }
+.seg-ctl.snd { min-width: min(100%, 300px); background: var(--navy-soft); }
+.seg-ctl.snd button { color: var(--on-navy); opacity: .75; }
+.seg-ctl.snd button[aria-pressed="true"] { background: var(--amber); color: var(--on-amber); opacity: 1; box-shadow: none; }
+.timer-pill { padding: 2px 12px; border-radius: 999px; background: var(--surface2); font-weight: 800; direction: ltr; }
+.timer-pill.low { background: color-mix(in srgb, var(--rose) 22%, var(--surface)); color: var(--rose); }
+.pips { display: flex; gap: 4px; margin-top: 6px; }
+.pips i { width: 22px; height: 6px; border-radius: 3px; background: var(--surface2); }
+.pips i.on { background: var(--mint); }
+.ul { margin: 6px 0 0; padding-inline-start: 20px; color: var(--muted); }
+.card.hint { border-inline-start: 4px solid var(--amber); }
+.card.flashy { background: var(--navy); color: var(--on-navy); border-color: var(--navy); font-size: 1.15rem; text-align: center; padding: 22px 16px; line-height: 1.9; }
+.ln { fill: none; stroke: var(--sky); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.ln-dot { fill: var(--surface); stroke: var(--sky); stroke-width: 3; }
+.ln-target { stroke: var(--amber); stroke-width: 2; stroke-dasharray: 6 5; }
+.field textarea { padding: 9px 12px; }
+.btn.block { min-height: 46px; }
+
+/* daily challenge */
+.card.daily { display: flex; align-items: center; gap: 14px; text-align: right; width: 100%; border-color: color-mix(in srgb, var(--amber) 40%, var(--line)); background: linear-gradient(120deg, color-mix(in srgb, var(--amber) 12%, var(--surface)), var(--surface)); }
+.card.daily .tico { margin: 0; flex: none; }
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* amicore planner: pure logic, no DOM. Works in the app and in Node tests. */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.Planner = factory();
+})(this, function () {
+  var DAYS = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+  var TYPES = { study: 1, review: 1, rest: 1 };
+
+  var STUDY_TASKS = [
+    'یادگیری مبحث جدید و نوشتن خلاصه‌ی خودت',
+    'حل تمرین و مسئله‌های کتاب',
+    'تست‌زنی و بررسی غلط‌ها',
+    'مرور نکته‌ها و درست کردن فلش‌کارت'
+  ];
+  var EXAM_TASKS = [
+    'حل نمونه‌سؤال امتحانی با زمان‌سنج',
+    'رفع اشکال از سؤال‌هایی که غلط زدی',
+    'مرور فصل‌های مهم و فرمول‌ها',
+    'تست‌زنی سرعتی از کل مباحث'
+  ];
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function fmt(m) { m = ((m % 1440) + 1440) % 1440; return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+  function parse(t) { var m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? +m[1] * 60 + +m[2] : null; }
+  function span(time) {
+    var m = /(\d{1,2}):(\d{2})\s*[-–—]\s*(\d{1,2}):(\d{2})/.exec(time || '');
+    if (!m) return 0;
+    var a = +m[1] * 60 + +m[2], b = +m[3] * 60 + +m[4];
+    return b > a ? b - a : 0;
+  }
+
+  function todayIdx(date) { return ((date || new Date()).getDay() + 1) % 7; }
+  function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function weekStart(date) {
+    var d = new Date(date || new Date()); d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() - todayIdx(d));
+    return iso(d);
+  }
+  function dateOf(dayIdx, date) {
+    var parts = weekStart(date).split('-');
+    var d = new Date(+parts[0], +parts[1] - 1, +parts[2], 12);
+    d.setDate(d.getDate() + dayIdx);
+    return iso(d);
+  }
+  function daysUntil(dateStr, now) {
+    if (!dateStr) return null;
+    var p = dateStr.split('-'); if (p.length !== 3) return null;
+    var a = new Date(+p[0], +p[1] - 1, +p[2], 12);
+    var b = new Date(now || new Date()); b.setHours(12, 0, 0, 0);
+    return Math.round((a - b) / 86400000);
+  }
+
+  /* Weighted round-robin: weak subjects appear more often, never twice in a row,
+     weak subjects are placed first in the day (when energy is highest). */
+  function build(p) {
+    var subs = (p.subjects || []).filter(function (s) { return s && s.name; });
+    if (!subs.length) subs = [{ name: 'درس‌ها', level: 2 }];
+    var weightOf = function (s) { return s.level === 1 ? 3 : s.level === 3 ? 1 : 2; };
+    var count = {}; subs.forEach(function (s) { count[s.name] = 0; });
+    var session = p.session || 50, rest = p.rest == null ? 10 : p.rest;
+    var start = parse(p.start); if (start == null) start = 16 * 60;
+    var left = daysUntil(p.examDate);
+    var examSoon = left != null && left >= 0 && left <= 10;
+    var taskIdx = {};
+    var prevFirst = null;
+    var days = [];
+    var studyDays = 0;
+
+    for (var d = 0; d < 7; d++) {
+      var avail = (p.minutesPerDay && p.minutesPerDay[d]) || 0;
+      var items = [];
+      var n = avail > 0 ? Math.max(1, Math.floor((avail + rest) / (session + rest))) : 0;
+      var useReview = n >= 3 && prevFirst;
+      var picks = [], last = null, i, k;
+      var freshCount = useReview ? n - 1 : n;
+      for (i = 0; i < freshCount; i++) {
+        var best = null, bestScore = Infinity;
+        for (k = 0; k < subs.length; k++) {
+          var s = subs[k];
+          if (subs.length > 1 && s.name === last) continue;
+          var sc = (count[s.name] + 1) / weightOf(s);
+          if (sc < bestScore - 1e-9 || (Math.abs(sc - bestScore) < 1e-9 && best && weightOf(s) > weightOf(best))) { best = s; bestScore = sc; }
+        }
+        best = best || subs[0];
+        count[best.name]++; last = best.name; picks.push(best);
+      }
+      picks.sort(function (a, b) { return weightOf(b) - weightOf(a); });
+      var seq = picks.map(function (s) { return { s: s, type: 'study' }; });
+      if (useReview) seq.push({ s: { name: prevFirst }, type: 'review' });
+      var t = start;
+      seq.forEach(function (b, idx) {
+        var len = b.type === 'review' ? Math.min(session, 30) : session;
+        var task;
+        if (b.type === 'review') task = 'مرور سریع نکته‌های ' + b.s.name + ' از روزهای قبل، بدون نگاه به کتاب';
+        else {
+          var list = examSoon ? EXAM_TASKS : STUDY_TASKS;
+          taskIdx[b.s.name] = (taskIdx[b.s.name] || 0);
+          task = list[taskIdx[b.s.name]++ % list.length];
+        }
+        items.push({ time: fmt(t) + '-' + fmt(t + len), subject: b.s.name, task: task, type: b.type });
+        t += len;
+        if (idx < seq.length - 1) {
+          items.push({ time: fmt(t) + '-' + fmt(t + rest), subject: 'استراحت', task: 'آب بخور، کمی راه برو و از صفحه دور شو', type: 'rest' });
+          t += rest;
+        }
+      });
+      if (picks.length) { prevFirst = picks[0].name; studyDays++; }
+      days.push({ day: DAYS[d], items: items });
+    }
+
+    var weak = subs.filter(function (s) { return s.level === 1; }).map(function (s) { return s.name; });
+    var summary = 'برنامه‌ی ' + studyDays + ' روز مطالعه در هفته' +
+      (weak.length ? ' با تمرکز بیشتر روی ' + weak.slice(0, 3).join(' و ') : '') +
+      (examSoon ? '. امتحان نزدیک است، پس تمرین‌ها شکل امتحانی دارند.' : '.');
+    var tips = [
+      'درس سخت را اول وقت بخوان؛ تمرکزت آن موقع بهتر است.',
+      'موقع استراحت گوشی دست نگیر تا ذهنت واقعاً خالی شود.',
+      'هر شب پنج دقیقه نکته‌های همان روز را از حفظ مرور کن.'
+    ];
+    return normalize({ summary: summary, days: days, tips: tips });
+  }
+
+  /* Accepts a plan from the AI or from build() and returns a clean, id-tagged copy (or null). */
+  function normalize(plan) {
+    if (!plan || !Array.isArray(plan.days) || !plan.days.length) return null;
+    var out = { summary: String(plan.summary || ''), tips: [], days: [] };
+    if (Array.isArray(plan.tips)) out.tips = plan.tips.filter(function (x) { return typeof x === 'string'; }).slice(0, 4);
+    for (var di = 0; di < 7; di++) {
+      var src = null;
+      for (var j = 0; j < plan.days.length; j++) if (plan.days[j] && plan.days[j].day === DAYS[di]) { src = plan.days[j]; break; }
+      if (!src && plan.days.length === 7) src = plan.days[di];
+      var items = [];
+      ((src && src.items) || []).forEach(function (it) {
+        if (!it || typeof it !== 'object') return;
+        var type = TYPES[it.type] ? it.type : (/استراحت/.test(it.subject || '') ? 'rest' : 'study');
+        items.push({ time: String(it.time || ''), subject: String(it.subject || ''), task: String(it.task || ''), type: type });
+      });
+      items.sort(function (a, b) { return (parse(a.time) || 0) - (parse(b.time) || 0); });
+      items.forEach(function (it, ii) { it.id = di + '-' + ii; });
+      out.days.push({ day: DAYS[di], items: items });
+    }
+    var any = out.days.some(function (x) { return x.items.length; });
+    return any ? out : null;
+  }
+
+  function workItems(day) { return (day.items || []).filter(function (i) { return i.type !== 'rest' && !i.moved; }); }
+
+  function endMin(day) {
+    var e = 0;
+    (day.items || []).forEach(function (i) { var m = /-(\d{1,2}):(\d{2})/.exec(i.time || ''); if (m) e = Math.max(e, +m[1] * 60 + +m[2]); });
+    return e;
+  }
+  function sortDay(day) {
+    day.items.sort(function (a, b) { return (parse(a.time) || 0) - (parse(b.time) || 0); });
+  }
+
+  /* Manual editing. */
+  function addItem(plan, di, it) {
+    var id = 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+    var item = { id: id, time: it.time, subject: it.subject, task: it.task || '', type: it.type === 'review' ? 'review' : 'study' };
+    plan.days[di].items.push(item); sortDay(plan.days[di]);
+    return item;
+  }
+  function removeItem(plan, di, id) {
+    var d = plan.days[di], n = d.items.length;
+    d.items = d.items.filter(function (i) { return i.id !== id; });
+    return n - d.items.length;
+  }
+
+  /* Move unfinished study blocks of past days to the lightest upcoming days (as review blocks). */
+  function compensate(plan, done, todayIdx, ref) {
+    var missed = [], di, j;
+    for (di = 0; di < todayIdx; di++) {
+      var date = dateOf(di, ref);
+      workItems(plan.days[di]).forEach(function (i) { if (!done[date + '|' + i.id]) missed.push({ di: di, item: i }); });
+    }
+    if (!missed.length) return { moved: 0, added: 0 };
+    var moved = 0, added = 0, left = Math.max(0, missed.length - 8);
+    missed.slice(0, 8).forEach(function (m) {
+      var len = Math.min(span(m.item.time) || 45, 45);
+      var cands = [];
+      for (var d = todayIdx; d < 7; d++) {
+        var load = workItems(plan.days[d]).reduce(function (a, i) { return a + span(i.time); }, 0);
+        cands.push({ d: d, load: load });
+      }
+      var busy = cands.filter(function (c) { return c.load > 0; });
+      if (busy.length) cands = busy; // keep the student's rest days free when possible
+      cands.sort(function (a, b) { return a.load - b.load || a.d - b.d; });
+      var placed = false;
+      for (j = 0; j < cands.length && !placed; j++) {
+        var day = plan.days[cands[j].d];
+        var extra = day.items.filter(function (i) { return /^جبران/.test(i.task); }).length;
+        var start = day.items.length ? endMin(day) + 10 : 16 * 60;
+        if (extra < 3 && start + len <= 22 * 60 + 30) {
+          day.items.push({ id: 'c' + Date.now().toString(36) + moved + cands[j].d, time: fmt(start) + '-' + fmt(start + len), subject: m.item.subject, task: 'جبران: ' + m.item.task, type: 'review' });
+          sortDay(day); placed = true;
+        }
+      }
+      if (placed) { m.item.moved = true; moved++; added++; } else left++;
+    });
+    return { moved: moved, added: added, left: left };
+  }
+
+  function levelInfo(xp) {
+    var lv = Math.floor(Math.sqrt(xp / 25)) + 1, base = 25 * (lv - 1) * (lv - 1), next = 25 * lv * lv;
+    return { level: lv, xp: xp, base: base, next: next, pct: (xp - base) / (next - base) };
+  }
+
+  /* Per-day planned/done minutes for the current week. done is a map keyed "weekStart|itemId". */
+  function weekStats(plan, done, ref) {
+    var res = [];
+    plan.days.forEach(function (d, di) {
+      var planned = 0, got = 0, count = 0, finished = 0, bySubject = {};
+      var date = dateOf(di, ref);
+      workItems(d).forEach(function (i) {
+        var m = span(i.time); planned += m; count++;
+        if (done[date + '|' + i.id]) { got += m; finished++; bySubject[i.subject] = (bySubject[i.subject] || 0) + m; }
+      });
+      res.push({ planned: planned, done: got, count: count, finished: finished, bySubject: bySubject });
+    });
+    return res;
+  }
+
+  return { DAYS: DAYS, build: build, normalize: normalize, weekStart: weekStart, dateOf: dateOf, todayIdx: todayIdx,
+           daysUntil: daysUntil, span: span, addItem: addItem, removeItem: removeItem, compensate: compensate, levelInfo: levelInfo, endMin: endMin, fmt: fmt, parse: parse, workItems: workItems, weekStats: weekStats, iso: iso };
+});
+
+</script>
+<script>
+/* Default AI settings baked into the app. Anyone with the APK or this file can read the key below. */
+window.AMI_DEFAULTS = {
+  provider: 'openai',
+  baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+  model: 'gemini-flash-latest',
+  apiKey: 'AQ.Ab8RN6JWECBqiySby71nRv4Ajj6Y2HxXntwuJKBeoPn9y9l4NA'
+};
+
+</script>
+<script>
+/* amicore AI client. The app talks straight to the AI service the user configures in Settings.
+   Nothing is sent anywhere else, and the key never leaves the phone except in requests to that service. */
+(function () {
+  var PRESETS = {
+    openai: { label: 'سازگار با OpenAI', baseUrl: 'https://api.openai.com/v1', model: 'gpt-4o-mini' },
+    anthropic: { label: 'Anthropic (Claude)', baseUrl: 'https://api.anthropic.com', model: 'claude-haiku-5-5' }
+  };
+
+  var SYS = [
+    'تو «امی‌کور»، مربی هوشمند برنامه‌ریزی درسی برای دانش‌آموزان ایرانی هستی. فقط فارسی روان و صمیمی بنویس، کوتاه و کاربردی.',
+    'می‌توانی به سؤال‌های درسی و روش مطالعه جواب بدهی و در صورت درخواست دانش‌آموز، برنامه‌ی هفتگی را بسازی یا اصلاح کنی.',
+    'قوانین برنامه: هر ۷ روز را به ترتیب شنبه تا جمعه بده؛ هر روز ۲ تا ۶ بخش؛ درس سخت اول وقت؛ بعد از هر ۴۵ تا ۶۰ دقیقه استراحت کوتاه؛ مرور درس‌های قبل را بگنجان؛ هر بخش یک کار مشخص داشته باشد؛ type فقط study یا review یا rest؛ ساعت‌ها مثل 16:00-17:30 با ارقام انگلیسی. به ساعت‌ها و محدودیت‌هایی که دانش‌آموز گفته پایبند باش.',
+    'خروجی فقط یک شیء JSON معتبر باشد، بدون توضیح اضافه و بدون بک‌تیک:',
+    '{"reply":"پیام برای دانش‌آموز","plan":null}',
+    'اگر برنامه ساختی یا تغییر دادی plan را کامل پر کن (همه‌ی ۷ روز):',
+    '{"summary":"خلاصه‌ی ۱ تا ۲ جمله","days":[{"day":"شنبه","items":[{"time":"16:00-17:00","subject":"ریاضی","task":"کار مشخص","type":"study"}]}],"tips":["نکته ۱","نکته ۲"]}',
+    'اگر نیازی به تغییر برنامه نبود plan را null بگذار.'
+  ].join('\n');
+
+  /* Inside Claude's artifact viewer there is no key and no outside network; ask Claude through the page capability instead. */
+  var viaClaude = null;
+  try { if (window.claude && window.claude.use) window.claude.use('sample').then(function (s) { viaClaude = s || null; }).catch(function () {}); } catch (e) {}
+
+  function err(code, msg) { var e = new Error(msg || code); e.code = code; return e; }
+
+  function extractJSON(t) {
+    if (t && typeof t === 'object') return t;
+    t = String(t || '');
+    var s = t.indexOf('{'), e = t.lastIndexOf('}');
+    if (s < 0 || e <= s) return null;
+    try { return JSON.parse(t.slice(s, e + 1)); } catch (x) { return null; }
+  }
+
+  /* Try the main service; when its free quota runs out (or it is unreachable) use the backup service if one is set. */
+  async function call(cfg, system, messages) {
+    try { return await callOne(cfg, system, messages); }
+    catch (e) {
+      var fb = cfg && cfg.fbKey ? { provider: 'openai', apiKey: cfg.fbKey, baseUrl: cfg.fbUrl, model: cfg.fbModel } : null;
+      if (fb && fb.baseUrl && (e.code === 'rate' || e.code === 'network' || e.code === 'timeout' || e.code === 'http' || e.code === 'model')) return await callOne(fb, system, messages);
+      throw e;
+    }
+  }
+
+  async function callOne(cfg, system, messages) {
+    if (viaClaude) {
+      var prompt = system + '\n\n--- گفتگو ---\n' + messages.map(function (m) { return (m.role === 'user' ? 'دانش‌آموز: ' : 'مربی: ') + m.content; }).join('\n') + '\n--- پایان ---\nپاسخ بعدی را بده.';
+      try { var r = await viaClaude(prompt, { cache: false }); return r.text; }
+      catch (e) { throw err(e && e.code === 'rate_limited' ? 'rate' : e && e.code === 'not_granted' ? 'auth' : 'http'); }
+    }
+    if (!cfg || !cfg.apiKey) throw err('no_key');
+    var provider = cfg.provider === 'anthropic' ? 'anthropic' : 'openai';
+    var base = String(cfg.baseUrl || PRESETS[provider].baseUrl).replace(/\/+$/, '');
+    var model = cfg.model || PRESETS[provider].model;
+    var url, headers, body;
+    if (provider === 'anthropic') {
+      url = base + '/v1/messages';
+      headers = { 'content-type': 'application/json', 'x-api-key': cfg.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' };
+      body = { model: model, max_tokens: 4096, system: system, messages: messages };
+    } else {
+      url = base + '/chat/completions';
+      headers = { 'content-type': 'application/json', authorization: 'Bearer ' + cfg.apiKey };
+      body = { model: model, messages: [{ role: 'system', content: system }].concat(messages) };
+    }
+    var ctl = new AbortController();
+    var timer = setTimeout(function () { ctl.abort(); }, 90000);
+    var res;
+    try {
+      res = await fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(body), signal: ctl.signal });
+    } catch (e) {
+      clearTimeout(timer);
+      throw err(e && e.name === 'AbortError' ? 'timeout' : 'network');
+    }
+    clearTimeout(timer);
+    if (!res.ok) {
+      throw err(res.status === 401 || res.status === 403 ? 'auth' : res.status === 429 ? 'rate' : res.status === 404 ? 'model' : 'http', 'HTTP ' + res.status);
+    }
+    var data;
+    try { data = await res.json(); } catch (e) { throw err('bad_reply'); }
+    var text = '';
+    if (provider === 'anthropic') {
+      text = (data.content || []).map(function (c) { return c.text || ''; }).join('');
+    } else {
+      text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || '';
+    }
+    if (!text) throw err('bad_reply');
+    return text;
+  }
+
+  function ctxText(ctx) {
+    var s = '';
+    if (ctx.profile) s += 'مشخصات دانش‌آموز (JSON): ' + JSON.stringify(ctx.profile) + '\n';
+    if (ctx.plan) s += 'برنامه‌ی فعلی (JSON): ' + JSON.stringify({ summary: ctx.plan.summary, days: ctx.plan.days.map(function (d) { return { day: d.day, items: d.items.map(function (i) { return { time: i.time, subject: i.subject, task: i.task, type: i.type }; }) }; }) }) + '\n';
+    if (ctx.today) s += 'امروز ' + ctx.today + ' است.\n';
+    return s;
+  }
+
+  /* history: [{role:'user'|'assistant', content}] ending with a user message. Returns {reply, plan}. */
+  async function chat(cfg, ctx, history) {
+    var msgs = history.slice(-12).map(function (m) { return { role: m.role, content: m.content }; });
+    var system = SYS + '\n\n' + ctxText(ctx);
+    var text = await call(cfg, system, msgs);
+    var j = extractJSON(text);
+    if (j && typeof j.reply === 'string') return { reply: j.reply, plan: j.plan || null };
+    return { reply: String(text).trim(), plan: null };
+  }
+
+  async function makePlan(cfg, ctx, note) {
+    var ask = 'بر اساس مشخصات دانش‌آموز یک برنامه‌ی هفتگی کامل بساز.' + (note ? ' درخواست او: ' + note : '') + ' در reply یک جمله بگو برنامه آماده است.';
+    var r = await chat(cfg, ctx, [{ role: 'user', content: ask }]);
+    if (!r.plan) throw err('bad_reply');
+    return r;
+  }
+
+  var BASE = 'تو «امی‌کور»، مربی هوشمند دانش‌آموزان ایرانی هستی. فقط فارسی روان بنویس. خروجی فقط یک شیء JSON معتبر باشد، بدون توضیح اضافه و بدون بک‌تیک.';
+
+  async function askJSON(cfg, instruction) {
+    var text = await call(cfg, BASE, [{ role: 'user', content: instruction }]);
+    var j = extractJSON(text);
+    if (!j) throw err('bad_reply');
+    return j;
+  }
+
+  var LEVEL_GUIDE = {
+    'آسان': 'مفهومی و پایه، مناسب مرور اول.',
+    'متوسط': 'در سطح امتحان نهایی مدرسه؛ ترکیب مفهوم و کاربرد.',
+    'سخت': 'سطح آزمون‌های چالشی (مثل تیزهوشان و آزمون‌های سنجش): تحلیلی و چندمرحله‌ای، ترکیب چند مفهوم، بدون سؤال تعریفی ساده.',
+    'کنکوری': 'سطح کنکور سراسری ایران: بسیار چالشی، تحلیلی، با دام‌های رایج و گزینه‌های بسیار نزدیک به هم.'
+  };
+
+  /* One small batch of hard multiple-choice questions. Several batches are requested in parallel so the first
+     questions appear quickly. Returns [{q, options[4], answer(0-3), explain}] */
+  async function quizBatch(cfg, o) {
+    var level = LEVEL_GUIDE[o.level] ? o.level : 'سخت';
+    var grade = o.grade ? 'پایه‌ی ' + o.grade + (o.grade === 'کنکوری' ? ' (داوطلب کنکور سراسری)' : '') : 'دبیرستان';
+    var src = o.source ? '\nفقط و فقط از متن زیر سؤال بساز (نه از بیرون آن):\n"""\n' + String(o.source).slice(0, 4000) + '\n"""\n' : '';
+    var j = await askJSON(cfg, 'تو طراح سؤال باتجربه‌ی آزمون‌های ایران هستی. ' + o.n + ' سؤال چهارگزینه‌ای برای دانش‌آموز ' + grade + (o.field ? ' رشته‌ی ' + o.field : '') +
+      ' درباره‌ی درس «' + o.subject + '»' + (o.topic ? ' و مبحث «' + o.topic + '»' : '') + ' بساز.' + src + '\n' +
+      'سطح: ' + level + ' (' + LEVEL_GUIDE[level] + ')\n' +
+      'این بخش ' + (o.part || 1) + ' از ' + (o.parts || 1) + ' بخش آزمون است؛ زیرمبحث‌هایت را طوری انتخاب کن که با بخش‌های دیگر تکراری نشود (شماره‌ی بخش = ' + (o.part || 1) + '، شناسه‌ی تنوع = ' + Math.floor(Math.random() * 9000 + 1000) + ').\n' +
+      'قواعد: ۱) دقیقاً مطابق کتاب‌های درسی ایران برای همین پایه و درس؛ از پایه‌های پایین‌تر سؤال نپرس. ۲) هیچ سؤال تعریفی یا حفظی ساده نباش؛ همه تحلیلی یا چندمرحله‌ای باشند. ' +
+      '۳) گزینه‌های غلط، اشتباه‌های رایج دانش‌آموزان و وسوسه‌کننده باشند؛ گزینه‌ها هم‌طول و هم‌سبک. ' +
+      '۴) ادبیات: آرایه‌ها، قرابت معنایی، دستور زبان، تاریخ ادبیات، املا و معنی واژه و تحلیل بیت؛ دروس محاسباتی: مسئله‌ی چندگامی. ' +
+      '۵) در فیلد explain اول سؤال را مرحله‌به‌مرحله حل کن (حداکثر سه جمله) و دلیل غلط بودن گزینه‌ی وسوسه‌کننده را بگو؛ بعد از آن answer را بنویس، تا جواب درست حتماً بررسی شده باشد. فقط یک گزینه درست باشد و جایگاه گزینه‌ی درست بین سؤال‌ها متنوع باشد. ' +
+      '۶) فرمول‌ها را ساده و بدون LaTeX بنویس. ' +
+      'ساختار (به همین ترتیب کلیدها): {"questions":[{"q":"متن سؤال","options":["گزینه ۱","گزینه ۲","گزینه ۳","گزینه ۴"],"explain":"حل و توضیح","answer":0}]} که answer شماره‌ی گزینه‌ی درست از ۰ تا ۳ است.');
+    var qs = (j.questions || []).filter(function (x) {
+      return x && typeof x.q === 'string' && Array.isArray(x.options) && x.options.length === 4 && Number.isInteger(x.answer) && x.answer >= 0 && x.answer <= 3;
+    }).map(function (x) { return { q: x.q, options: x.options.map(String), answer: x.answer, explain: String(x.explain || '') }; });
+    if (!qs.length) throw err('bad_reply');
+    return qs;
+  }
+
+  /* Summary + flashcards from pasted study text. */
+  async function summarize(cfg, text) {
+    var j = await askJSON(cfg, 'متن درسی زیر را برای دانش‌آموز خلاصه کن و فلش‌کارت بساز.\nمتن:\n"""\n' + String(text).slice(0, 8000) + '\n"""\n' +
+      'ساختار: {"summary":"خلاصه‌ی ۳ تا ۵ جمله","points":["نکته‌ی کلیدی ۱","نکته‌ی کلیدی ۲"],"cards":[{"front":"سؤال یا واژه","back":"جواب کوتاه"}]} با ۴ تا ۸ نکته و ۴ تا ۸ فلش‌کارت.');
+    if (typeof j.summary !== 'string') throw err('bad_reply');
+    j.points = Array.isArray(j.points) ? j.points.map(String).slice(0, 10) : [];
+    j.cards = (Array.isArray(j.cards) ? j.cards : []).filter(function (c) { return c && c.front && c.back; }).map(function (c) { return { front: String(c.front), back: String(c.back) }; }).slice(0, 12);
+    return j;
+  }
+
+  /* Weekly coaching report from numbers. */
+  async function report(cfg, stats) {
+    var j = await askJSON(cfg, 'این آمار هفته‌ی دانش‌آموز است (JSON): ' + JSON.stringify(stats) +
+      '\nیک گزارش کوتاه و مهربان بنویس: نقطه‌های قوت، چیزی که باید بهتر شود، و ۳ پیشنهاد مشخص برای هفته‌ی بعد. ساختار: {"text":"گزارش در حداکثر ۱۲۰ کلمه"}');
+    if (typeof j.text !== 'string') throw err('bad_reply');
+    return j.text;
+  }
+
+  /* Day-by-day revision plan up to an exam. Returns [{when, focus}] */
+  async function examPlan(cfg, o) {
+    var j = await askJSON(cfg, 'یک برنامه‌ی مرور برای امتحان «' + o.name + '» که ' + o.days + ' روز دیگر است بساز. درس‌های دانش‌آموز (JSON): ' + JSON.stringify(o.subjects || []) +
+      '. روزها را از امروز تا روز امتحان مرتب کن و اگر بیش از ۱۴ روز مانده، چند روز را در یک مورد جمع کن (حداکثر ۱۴ مورد). در روزهای آخر مرور و نمونه‌سؤال بگذار و شب امتحان سبک باشد. ' +
+      'ساختار: {"items":[{"when":"مثلاً روز ۱ یا ۵ روز مانده","focus":"چه چیزی و چقدر مرور شود"}]}');
+    var items = (Array.isArray(j.items) ? j.items : []).filter(function (x) { return x && x.when && x.focus; }).map(function (x) { return { when: String(x.when), focus: String(x.focus) }; }).slice(0, 14);
+    if (!items.length) throw err('bad_reply');
+    return items;
+  }
+
+  /* Study tutor. mode: solve | explain | feynman | mnemonic */
+  async function tutor(cfg, mode, o) {
+    var who = 'دانش‌آموز ' + (o.grade || '') + (o.field ? ' رشته‌ی ' + o.field : '') + (o.subject ? '، درس ' + o.subject : '');
+    var ins;
+    if (mode === 'solve') {
+      ins = who + ' این مسئله را حل نمی‌کند:  + o.text + . جواب را فوراً نده. اول سه راهنمایی تدریجی بده (اولی کلی، دومی مشخص‌تر، سومی تقریباً کامل)، بعد پاسخ کامل مرحله‌به‌مرحله و یک راه ساده برای بررسی درستی جواب. فرمول‌ها را بدون LaTeX بنویس. ' +
+        'ساختار: {"hints":["راهنمایی ۱","راهنمایی ۲","راهنمایی ۳"],"solution":"پاسخ کامل مرحله‌به‌مرحله","check":"راه بررسی"}';
+    } else if (mode === 'explain') {
+      ins = who + ' این مبحث را نمی‌فهمد:  + o.text + . ساده و با مثال توضیح بده، بعد یک تشبیه روزمره بیاور. ساختار: {"text":"توضیح ساده","example":"یک مثال حل‌شده یا ملموس","analogy":"تشبیه روزمره"}';
+    } else if (mode === 'feynman') {
+      ins = who + ' مبحث «' + o.text + '» را با زبان خودش این‌طور توضیح داده (روش فاینمن):  + o.mine + . توضیح خودش را مثل یک معلم مهربان ارزیابی کن: نمره‌ی ۰ تا ۱۰، چیزهای درست، چیزهای جاافتاده یا غلط، و یک نسخه‌ی اصلاح‌شده‌ی کوتاه. ' +
+        'ساختار: {"score":7,"good":["نکته‌ی درست"],"missing":["نکته‌ی جاافتاده یا غلط"],"fix":"نسخه‌ی اصلاح‌شده"}';
+    } else {
+      ins = who + ' باید این را حفظ کند:  + o.text + . یک ترفند حفظی خلاقانه به فارسی بساز (جمله‌ی کوتاه، قافیه یا کلمه‌ی اول‌حرف‌ها) و توضیح بده چطور با مطلب ربط دارد. ساختار: {"mnemonic":"ترفند حفظی","how":"توضیح ربط آن با مطلب"}';
+    }
+    var j = await askJSON(cfg, ins);
+    if (mode === 'solve') {
+      var h = (Array.isArray(j.hints) ? j.hints : []).map(String).filter(Boolean).slice(0, 4);
+      if (!h.length || typeof j.solution !== 'string') throw err('bad_reply');
+      return { hints: h, solution: j.solution, check: String(j.check || '') };
+    }
+    if (mode === 'explain') {
+      if (typeof j.text !== 'string') throw err('bad_reply');
+      return { text: j.text, example: String(j.example || ''), analogy: String(j.analogy || '') };
+    }
+    if (mode === 'feynman') {
+      var sc = Math.round(+j.score);
+      if (isNaN(sc)) throw err('bad_reply');
+      return { score: Math.max(0, Math.min(10, sc)), good: (Array.isArray(j.good) ? j.good : []).map(String).slice(0, 5), missing: (Array.isArray(j.missing) ? j.missing : []).map(String).slice(0, 5), fix: String(j.fix || '') };
+    }
+    if (typeof j.mnemonic !== 'string') throw err('bad_reply');
+    return { mnemonic: j.mnemonic, how: String(j.how || '') };
+  }
+
+  async function test(cfg) {
+    var text = await call(cfg, 'فقط یک کلمه جواب بده.', [{ role: 'user', content: 'سلام' }]);
+    return String(text).slice(0, 40);
+  }
+
+  window.AmiAI = { available: function () { return !!viaClaude; }, PRESETS: PRESETS, chat: chat, makePlan: makePlan, test: test, quizBatch: quizBatch, tutor: tutor, examPlan: examPlan, summarize: summarize, report: report };
+})();
+
+</script>
+<script>
+/* amicore app shell */
+(function () {
+  'use strict';
+  var P = window.Planner, AI = window.AmiAI;
+  var KEY = 'amicore-v1';
+  var $app = document.getElementById('app');
+  var SHORT = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
+
+  /* ---------- helpers ---------- */
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function fa(s) { return String(s == null ? '' : s).replace(/\d/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; }); }
+  function mins(m) {
+    m = Math.round(m || 0);
+    var h = Math.floor(m / 60), r = m % 60;
+    if (!h) return fa(r) + ' دقیقه';
+    return fa(h) + ' ساعت' + (r ? ' و ' + fa(r) + ' دقیقه' : '');
+  }
+  var IC = {
+    home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+    cal: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/>',
+    chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+    chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    play: '<path d="M7 4.5v15l13-7.5z"/>',
+    send: '<path d="M3 11.5L21 3l-6 18-3.5-7.5z"/>',
+    x: '<path d="M6 6l12 12M18 6L6 18"/>',
+    flame: '<path d="M12 2c1 4 5 5.5 5 11a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3 0-4-1-6 1-9.5z"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".6"/>',
+    cup: '<path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10h2a2 2 0 0 1 0 4h-2M8 3v3M12 3v3"/>',
+    spark: '<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    tools: '<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',
+    quiz: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17v.01"/>',
+    note: '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/>',
+    cards: '<rect x="3" y="8" width="13" height="11" rx="2"/><path d="M7 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3"/>',
+    list: '<path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+    trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+    bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+    brain: '<path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V4a3 3 0 0 0-3 0zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1"/>',
+    trend: '<path d="M3 17l6-6 4 4 8-9M15 6h6v6"/>',
+    timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>'
+  };
+  function ic(n) { return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">' + (IC[n] || '') + '</svg>'; }
+
+  /* ---------- state ---------- */
+  var DEFAULT = {
+    profile: null, plan: null, done: {}, focus: {}, chat: [],
+    homework: [], exams: [], cards: [], quizzes: [], mistakes: [], goalHours: 10, focusSub: {}, dailyDone: {}, topics: [], grades: [], targetAvg: 18, revCount: 0, report: null, reminder: { on: false, time: '16:00' },
+    settings: Object.assign({ provider: 'openai', apiKey: '', baseUrl: '', model: '', theme: 'auto', accent: 'amber', fbKey: '', fbUrl: '', fbModel: '' }, window.AMI_DEFAULTS || {})
+  };
+  var S = load();
+  function load() {
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (s) {
+        var d = JSON.parse(JSON.stringify(DEFAULT));
+        for (var k in d) if (s[k] != null) d[k] = s[k];
+        d.settings = Object.assign({}, DEFAULT.settings, s.settings || {});
+        var AD = window.AMI_DEFAULTS || {};
+        ['apiKey', 'baseUrl', 'model'].forEach(function (k) { if (!d.settings[k] && AD[k]) d.settings[k] = AD[k]; });
+        return d;
+      }
+    } catch (e) {}
+    return JSON.parse(JSON.stringify(DEFAULT));
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  var ACCENTS = { amber: null, coral: '#FF6B6B', mint: '#22C79A', sky: '#4FA3FF', violet: '#A78BFA' };
+  var ACCENT_NAMES = { amber: 'نارنجی', coral: 'مرجانی', mint: 'نعنایی', sky: 'آبی', violet: 'بنفش' };
+  function applyTheme() {
+    var t = S.settings.theme;
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    else document.documentElement.removeAttribute('data-theme');
+    var a = ACCENTS[S.settings.accent];
+    if (a) document.documentElement.style.setProperty('--amber', a); else document.documentElement.style.removeProperty('--amber');
+  }
+  applyTheme();
+
+  var ui = { view: 'today', overlay: null, selDay: P.todayIdx(), busy: false, toastT: 0, testMsg: null, rbusy: false, exbusy: null };
+  var qz = null, ni = null, fr = null, tu = null, tp = null, gr = null, sm = { text: '', busy: false, res: null, err: '' }, cd = null;
+  var ob = null; // onboarding scratch
+  var focus = null; // running focus session
+
+  function hasAI() { return !!(S.settings.apiKey || (AI.available && AI.available())); }
+
+  function toast(msg) {
+    var old = document.querySelector('.toast'); if (old) old.remove();
+    var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+    $app.appendChild(t);
+    clearTimeout(ui.toastT);
+    ui.toastT = setTimeout(function () { t.remove(); }, 2600);
+  }
+
+  /* ---------- derived ---------- */
+  function dateKey(d) { return P.dateOf(d); }
+  function isDone(date, id) { return !!S.done[date + '|' + id]; }
+  function dayPlan(di) { return S.plan && S.plan.days[di] ? S.plan.days[di] : { day: P.DAYS[di], items: [] }; }
+  function streak() {
+    var set = {};
+    Object.keys(S.done).forEach(function (k) { if (S.done[k]) set[k.split('|')[0]] = 1; });
+    var d = new Date(); d.setHours(12, 0, 0, 0);
+    var n = 0;
+    if (!set[P.iso(d)]) d.setDate(d.getDate() - 1); // today not done yet does not break the streak
+    while (set[P.iso(d)]) { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  function nextExam() {
+    var best = null;
+    var all = (S.exams || []).slice();
+    if (S.profile && S.profile.examDate) all.push({ name: 'امتحان', date: S.profile.examDate });
+    all.forEach(function (e) { var d = P.daysUntil(e.date); if (d != null && d >= 0 && (!best || d < best.days)) best = { name: e.name, days: d }; });
+    return best;
+  }
+  function openHW() { return (S.homework || []).filter(function (h) { return !h.done; }); }
+  function dueCards() { var t = P.iso(new Date()); return (S.cards || []).filter(function (c) { return !c.due || c.due <= t; }); }
+  var PAL = ['#E8590C', '#1C7ED6', '#2F9E44', '#9C36B5', '#D6336C', '#0C8599', '#F08C00', '#5C7CFA'];
+  function subjColor(name) { var h = 0; name = String(name || ''); for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 997; return PAL[h % PAL.length]; }
+  function sdot(name) { return '<i class="sdot" style="background:' + subjColor(name) + '"></i>'; }
+  var INTERVALS = [1, 3, 7, 16, 35, 70];
+  function addDays(n) { var d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + n); return P.iso(d); }
+  function dueTopics() { var t = P.iso(new Date()); return (S.topics || []).filter(function (x) { return x.due <= t; }); }
+  function reviewTopic(t, res) {
+    if (res === 'forgot') { t.stage = 0; t.due = addDays(1); }
+    else if (res === 'hard') { t.due = addDays(Math.max(1, Math.round(INTERVALS[t.stage] / 2))); }
+    else { t.stage = Math.min(t.stage + 1, 5); t.due = addDays(INTERVALS[t.stage]); }
+    S.revCount = (S.revCount || 0) + 1;
+  }
+  function whenText(date) { var d = P.daysUntil(date); return d == null ? '' : d <= 0 ? 'امروز' : d === 1 ? 'فردا' : fa(d) + ' روز دیگر'; }
+  function testPct(g) { return Math.round(((g.correct - g.wrong / 3) / g.total) * 1000) / 10; }
+  function examScores() { return (S.grades || []).filter(function (g) { return g.kind === 'exam'; }); }
+  function avgOf(list) { return list.length ? list.reduce(function (a, g) { return a + g.score; }, 0) / list.length : null; }
+  function fnum(n) { return fa((Math.round(n * 100) / 100).toString().replace('.', '٫')); }
+  var QUOTES = ['کم بخوان ولی هر روز بخوان؛ پیوستگی از ساعت‌های طولانی مهم‌تر است.', 'اگر نمی‌توانی ساده توضیحش بدهی، هنوز کامل یاد نگرفته‌ای.', 'استراحت بخشی از درس خواندن است، نه دشمن آن.', 'غلط زدن در آزمون تمرینی، یعنی در امتحان اصلی درست می‌زنی.', 'اول سخت‌ترین درس را بخوان؛ بقیه‌ی روز سبک می‌شود.', 'خواب کافی بیشتر از یک ساعت درس اضافه به یادگیری کمک می‌کند.', 'از حفظ مرور کن، نه فقط خواندن دوباره.'];
+  function quoteOfDay() { var d = new Date(); return QUOTES[(d.getFullYear() * 400 + d.getMonth() * 31 + d.getDate()) % QUOTES.length]; }
+  function inRange(time, nm) { var m = /(\d{1,2}):(\d{2})\s*[-–—]\s*(\d{1,2}):(\d{2})/.exec(time || ''); if (!m) return false; return nm >= +m[1] * 60 + +m[2] && nm < +m[3] * 60 + +m[4]; }
+
+  /* ambient focus sound, generated in the browser (no audio files) */
+  var Snd = {
+    ctx: null, src: null, kind: 'off',
+    stop: function () { try { if (this.src) { this.src.stop(); this.src.disconnect(); } } catch (e) {} this.src = null; this.kind = 'off'; },
+    start: function (kind) {
+      this.stop(); if (kind === 'off') return;
+      try {
+        var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+        if (!this.ctx) this.ctx = new AC();
+        var c = this.ctx; if (c.state === 'suspended') c.resume();
+        var len = c.sampleRate * 2, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0), last = 0;
+        for (var i = 0; i < len; i++) { var w = Math.random() * 2 - 1; if (kind === 'brown') { last = (last + 0.02 * w) / 1.02; d[i] = last * 3.5; } else d[i] = w; }
+        var src = c.createBufferSource(); src.buffer = buf; src.loop = true;
+        var g = c.createGain(); g.gain.value = kind === 'brown' ? 0.5 : 0.09;
+        if (kind === 'rain') { var hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 900; var lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 7000; src.connect(hp); hp.connect(lp); lp.connect(g); }
+        else src.connect(g);
+        g.connect(c.destination); src.start(); this.src = src; this.kind = kind;
+      } catch (e) {}
+    }
+  };
+  function focusToday() { return S.focus[P.iso(new Date())] || 0; }
+  function focusTotal() { return Object.keys(S.focus).reduce(function (a, k) { return a + S.focus[k]; }, 0); }
+  function doneCount() { return Object.keys(S.done).filter(function (k) { return S.done[k]; }).length; }
+  function xpTotal() {
+    var n = doneCount() * 10 + Math.round(focusTotal());
+    (S.quizzes || []).forEach(function (q) { n += q.score * 2; });
+    n += (S.homework || []).filter(function (h) { return h.done; }).length * 5;
+    n += (S.revCount || 0) * 3 + Object.keys(S.dailyDone || {}).length * 15;
+    return n;
+  }
+  var LEVEL_TITLES = ['نوآموز', 'کوشا', 'پیگیر', 'تلاشگر', 'حرفه‌ای', 'استاد برنامه', 'نابغه'];
+  function levelTitle(l) { return LEVEL_TITLES[Math.min(l - 1, LEVEL_TITLES.length - 1)]; }
+  function missedCount() {
+    if (!S.plan) return 0;
+    var n = 0, td = P.todayIdx();
+    for (var di = 0; di < td; di++) { var date = dateKey(di); P.workItems(dayPlan(di)).forEach(function (i) { if (!isDone(date, i.id)) n++; }); }
+    return n;
+  }
+  function badgeList() {
+    var q = S.quizzes || [], st = S.plan ? P.weekStats(S.plan, S.done) : [], tp = 0, td = 0, sk = streak();
+    st.forEach(function (x) { tp += x.planned; td += x.done; });
+    return [
+      { t: 'اولین قدم', d: 'یک بخش را انجام بده', i: 'check', ok: doneCount() >= 1 },
+      { t: 'سه روز پیوسته', d: '۳ روز پشت‌سرهم فعال باش', i: 'flame', ok: sk >= 3 },
+      { t: 'هفته‌ی بی‌وقفه', d: '۷ روز پشت‌سرهم', i: 'flame', ok: sk >= 7 },
+      { t: 'آزمون‌باز', d: 'یک آزمون بده', i: 'quiz', ok: q.length >= 1 },
+      { t: 'نمره‌ی کامل', d: 'در یک آزمون همه را درست بزن', i: 'target', ok: q.some(function (x) { return x.score === x.total; }) },
+      { t: 'کارت‌باز', d: '۱۰ فلش‌کارت بساز', i: 'cards', ok: (S.cards || []).length >= 10 },
+      { t: 'تمرکز طلایی', d: '۲ ساعت تمرکز با تایمر', i: 'timer', ok: focusTotal() >= 120 },
+      { t: 'تکلیف‌شکن', d: '۵ تکلیف را تمام کن', i: 'list', ok: (S.homework || []).filter(function (h) { return h.done; }).length >= 5 },
+      { t: 'هفته‌ی کامل', d: '۹۰٪ برنامه‌ی هفته', i: 'cal', ok: tp > 0 && td / tp >= 0.9 }
+    ];
+  }
+  function heatHTML() {
+    var cnt = {}, W = 12, cell = 18, gap = 4, out = '', today = P.iso(new Date());
+    Object.keys(S.done).forEach(function (k) { if (S.done[k]) { var d = k.split('|')[0]; cnt[d] = (cnt[d] || 0) + 1; } });
+    Object.keys(S.focus).forEach(function (d) { if (S.focus[d] > 0) cnt[d] = (cnt[d] || 0) + 1; });
+    var wp = P.weekStart().split('-'), base = new Date(+wp[0], +wp[1] - 1, +wp[2], 12);
+    for (var w = 0; w < W; w++) {
+      for (var di = 0; di < 7; di++) {
+        var d = new Date(base); d.setDate(d.getDate() - (W - 1 - w) * 7 + di);
+        var key = P.iso(d), n = cnt[key] || 0;
+        var lvl = key > today ? 'f' : n === 0 ? 0 : n < 2 ? 1 : n < 4 ? 2 : n < 6 ? 3 : 4;
+        out += '<rect class="hm l' + lvl + '" x="' + ((W - 1 - w) * (cell + gap)) + '" y="' + (di * (cell + gap)) + '" width="' + cell + '" height="' + cell + '" rx="5"><title>' + key + ' : ' + n + '</title></rect>';
+      }
+    }
+    var vw = W * (cell + gap) - gap, vh = 7 * (cell + gap) - gap;
+    return '<svg class="bars-svg" viewBox="0 0 ' + vw + ' ' + vh + '" role="img" aria-label="نقشه‌ی فعالیت ۱۲ هفته‌ی اخیر">' + out + '</svg>' +
+      '<div class="legend"><span>کم</span>' + [0, 1, 2, 3, 4].map(function (l) { return '<i class="hm-dot l' + l + '"></i>'; }).join('') + '<span>زیاد</span></div>';
+  }
+  function confetti() {
+    try { if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) {}
+    var box = document.createElement('div'); box.className = 'confetti'; box.setAttribute('aria-hidden', 'true');
+    var cols = ['#FF8A1F', '#19B98A', '#3B6BE0', '#D63C4B', '#FFD84D', '#A78BFA'];
+    for (var i = 0; i < 34; i++) {
+      var c = document.createElement('i');
+      c.style.setProperty('--x', (Math.random() * 300 - 150).toFixed(0) + 'px');
+      c.style.setProperty('--y', (-(120 + Math.random() * 260)).toFixed(0) + 'px');
+      c.style.setProperty('--r', (Math.random() * 720 - 360).toFixed(0) + 'deg');
+      c.style.background = cols[i % cols.length]; c.style.animationDelay = (Math.random() * 0.15).toFixed(2) + 's';
+      box.appendChild(c);
+    }
+    $app.appendChild(box); setTimeout(function () { box.remove(); }, 2000);
+  }
+  function rewardCheck(beforeXp, allDone) {
+    var a = P.levelInfo(beforeXp).level, b = P.levelInfo(xpTotal()).level;
+    if (b > a) { confetti(); toast('سطح ' + fa(b) + ' شدی: ' + levelTitle(b)); }
+    else if (allDone) { confetti(); toast('همه‌ی بخش‌های امروز انجام شد!'); }
+    else toast('+۱۰ امتیاز');
+  }
+  function toggleItem(date, id) {
+    var k = date + '|' + id, before = xpTotal();
+    if (S.done[k]) { delete S.done[k]; save(); render(); return; }
+    S.done[k] = 1; save(); render();
+    var td = P.todayIdx(), w = P.workItems(dayPlan(td)), all = date === dateKey(td) && w.length && w.every(function (i) { return isDone(date, i.id); });
+    rewardCheck(before, all);
+  }
+  function planText() {
+    if (!S.plan) return '';
+    var out = ['برنامه‌ی هفتگی amicore', ''];
+    S.plan.days.forEach(function (d) {
+      out.push(d.day);
+      d.items.forEach(function (i) { if (!i.moved) out.push('  ' + i.time + '  ' + i.subject + (i.type === 'rest' ? '' : ' - ' + i.task)); });
+      out.push('');
+    });
+    return fa(out.join('\n'));
+  }
+
+  /* ---------- progress ring ---------- */
+  function segRing(total, doneN, size, r, sw, cls) {
+    var C = 2 * Math.PI * r, parts = '';
+    if (total < 1) return '<svg class="seg-ring" viewBox="0 0 ' + size + ' ' + size + '"><circle class="seg" cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '"/></svg>';
+    var gap = total > 1 ? 14 : 0, len = C / total - gap;
+    for (var i = 0; i < total; i++) {
+      var rot = -90 + (360 / total) * i;
+      parts += '<circle class="seg' + (i < doneN ? ' on' : '') + '" cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" stroke-dasharray="' + len.toFixed(2) + ' ' + (C - len).toFixed(2) + '" transform="rotate(' + rot.toFixed(1) + ' ' + size / 2 + ' ' + size / 2 + ')"/>';
+    }
+    return '<svg class="seg-ring" viewBox="0 0 ' + size + ' ' + size + '" aria-hidden="true">' + parts + '</svg>';
+  }
+  function miniRing(pct) {
+    var r = 11, C = 2 * Math.PI * r, v = Math.max(0, Math.min(1, pct)) * C;
+    return '<svg viewBox="0 0 30 30" aria-hidden="true"><circle class="mini-track" cx="15" cy="15" r="11"/><circle class="mini-val" cx="15" cy="15" r="11" stroke-dasharray="' + v.toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 15 15)"/></svg>';
+  }
+
+  /* ---------- list of items ---------- */
+  function itemsHTML(di, edit) {
+    var d = dayPlan(di), date = dateKey(di);
+    if (!d.items.length) return '<div class="empty"><p>این روز استراحت است. کاری برای انجام نیست.</p></div>';
+    var del = function (it) { return edit ? '<button class="icon-btn sm" data-act="delitem" data-di="' + di + '" data-id="' + it.id + '" aria-label="حذف ' + esc(it.subject) + '">' + ic('trash') + '</button>' : ''; };
+    return '<div class="list">' + d.items.map(function (it) {
+      var ec = edit ? ' edit' : '';
+      if (it.moved) {
+        return '<div class="item rest moved' + ec + '"><div class="box">' + ic('clock') + '</div><div class="meta"><span class="tm num">' + fa(it.time) + '</span> <span class="subj">' + esc(it.subject) + '</span><span class="tag review">منتقل شد</span></div>' + del(it) + '</div>';
+      }
+      if (it.type === 'rest') {
+        return '<div class="item rest' + ec + '"><div class="box">' + ic('cup') + '</div><div class="meta"><span class="tm num">' + fa(it.time) + '</span> <span class="subj">' + esc(it.subject) + '</span></div>' + del(it) + '</div>';
+      }
+      var done = isDone(date, it.id), nowM = di === P.todayIdx() && !done && inRange(it.time, new Date().getHours() * 60 + new Date().getMinutes());
+      return '<div class="item' + (done ? ' done' : '') + (nowM ? ' now' : '') + ec + '">' +
+        '<button class="box" data-act="toggle" data-date="' + date + '" data-id="' + it.id + '" aria-label="' + (done ? 'برگرداندن' : 'انجام شد') + '" aria-pressed="' + done + '">' + ic('check') + '</button>' +
+        '<div class="meta"><span class="tm num">' + fa(it.time) + '</span><div class="subj">' + sdot(it.subject) + esc(it.subject) +
+        (nowM ? '<span class="tag now">اکنون</span>' : '') + (it.type === 'review' ? '<span class="tag review">مرور</span>' : '') + '</div><div class="what">' + esc(it.task) + '</div></div>' + del(it) + '</div>';
+    }).join('') + '</div>';
+  }
+
+  /* ---------- views ---------- */
+  function noPlanHTML() {
+    return '<div class="card empty"><h2>هنوز برنامه‌ای نداری</h2><p>مشخصاتت را بنویس تا برنامه‌ی هفتگی بسازیم.</p>' +
+      '<button class="btn amber" data-act="onboard">' + ic('spark') + ' شروع</button></div>';
+  }
+
+  function todayView() {
+    if (!S.profile) return '<div class="hello"><h1>سلام! به amicore خوش آمدی</h1><p>دستیار هوشمند برنامه‌ریزی درسی</p></div>' + noPlanHTML();
+    var di = P.todayIdx(), d = dayPlan(di), date = dateKey(di);
+    var work = P.workItems(d);
+    var doneN = work.filter(function (i) { return isDone(date, i.id); }).length;
+    var planned = work.reduce(function (a, i) { return a + P.span(i.time); }, 0);
+    var got = work.reduce(function (a, i) { return a + (isDone(date, i.id) ? P.span(i.time) : 0); }, 0);
+    var ne = nextExam(), left = ne ? ne.days : null;
+    var nextIt = work.filter(function (i) { return !isDone(date, i.id); })[0];
+    var dateTxt = '';
+    try { dateTxt = new Date().toLocaleDateString('fa-IR-u-ca-persian', { day: 'numeric', month: 'long' }); } catch (e) {}
+    var h = '<div class="hello"><h1>سلام ' + esc(S.profile.name || 'دوست من') + '</h1><p>' + esc(P.DAYS[di]) + ' ' + esc(dateTxt) + '</p><span class="pill">' + ic('spark') + 'سطح ' + fa(P.levelInfo(xpTotal()).level) + ' · ' + levelTitle(P.levelInfo(xpTotal()).level) + ' · ' + fa(xpTotal()) + ' امتیاز</span><p class="quote">' + esc(quoteOfDay()) + '</p></div>';
+
+    h += '<section class="core" aria-label="پیشرفت امروز"><div class="ring-wrap">' + segRing(work.length, doneN, 150, 62, 12) +
+      '<div class="ring-mid"><b class="num">' + fa(doneN) + '/' + fa(work.length) + '</b><span>بخش انجام‌شده</span></div></div><div class="facts">' +
+      '<div class="fact">' + ic('clock') + '<div><b>' + mins(got) + '</b><small>از ' + mins(planned) + ' امروز</small></div></div>' +
+      '<div class="fact">' + ic('flame') + '<div><b>' + (streak() ? fa(streak()) + ' روز پشت‌سرهم' : 'شروع کن') + '</b><small>روزهای فعال</small></div></div>' +
+      (left != null && left >= 0 ? '<div class="fact">' + ic('target') + '<div><b>' + fa(left) + ' روز</b><small>تا ' + esc(ne.name) + '</small></div></div>'
+        : '<div class="fact">' + ic('play') + '<div><b>' + mins(focusToday()) + '</b><small>تمرکز امروز</small></div></div>') +
+      '</div></section>';
+
+    if (nextIt) {
+      h += '<section class="card next"><span class="lab">کار بعدی</span><div class="row"><div style="min-width:0"><b>' + esc(nextIt.subject) + '</b><div class="what">' + esc(nextIt.task) + '</div></div>' +
+        '<button class="btn amber" data-act="focus" data-id="' + nextIt.id + '">' + ic('play') + ' شروع</button></div></section>';
+    } else if (work.length) {
+      h += '<section class="card next"><b>همه‌ی بخش‌های امروز انجام شد. آفرین!</b><span class="what">برای فردا انرژی نگه دار.</span></section>';
+    }
+    if (S.profile && S.profile.subjects.length) {
+      h += '<button class="card daily" data-act="open" data-v="daily"><span class="tico">' + ic('quiz') + '</span><span style="text-align:right;min-width:0"><b>' + (dailyDone() ? 'چالش امروز را انجام دادی' : 'چالش امروز') + '</b><span class="tsub" style="display:block">' + (dailyDone() ? 'برای تمرین بیشتر دوباره بزن' : '۳ سؤال سخت از درسی که باید قوی‌تر شود · ۱۵ امتیاز') + '</span></span></button>';
+    }
+    var hw = openHW(), miss = missedCount(), dtp = dueTopics();
+    if (hw.length || dueCards().length || miss || dtp.length) {
+      h += '<div class="chips">' + (dtp.length ? '<button class="chip hot" data-act="open" data-v="topics">' + fa(dtp.length) + ' مبحث برای مرور</button>' : '') + (miss ? '<button class="chip hot" data-act="comp">' + fa(miss) + ' بخش عقب‌افتاده؛ جبران کن</button>' : '') +
+        (hw.length ? '<button class="chip" data-act="open" data-v="hw">' + fa(hw.length) + ' تکلیف باز</button>' : '') +
+        (dueCards().length ? '<button class="chip" data-act="open" data-v="cards">' + fa(dueCards().length) + ' فلش‌کارت برای مرور</button>' : '') + '</div>';
+    }
+    h += '<div class="sec-title"><h2>برنامه‌ی امروز</h2><small class="num">' + fa(work.length) + ' بخش</small></div>' + itemsHTML(di);
+    return h;
+  }
+
+  function weekView() {
+    if (!S.profile || !S.plan) return noPlanHTML();
+    var stats = P.weekStats(S.plan, S.done);
+    var td = P.todayIdx();
+    var h = '<div class="sec-title"><h2>برنامه‌ی هفته</h2></div>';
+    if (S.plan.summary) h += '<p class="note">' + esc(fa(S.plan.summary)) + '</p>';
+    h += '<div class="strip" role="group" aria-label="روزهای هفته">' + P.DAYS.map(function (n, i) {
+      var st = stats[i], pct = st.planned ? st.done / st.planned : 0;
+      return '<button class="dayb' + (i === td ? ' today' : '') + '" data-act="day" data-i="' + i + '" aria-pressed="' + (i === ui.selDay) + '"><span>' + SHORT[i] + '</span>' + miniRing(pct) + '</button>';
+    }).join('') + '</div>';
+    var ds = stats[ui.selDay];
+    h += '<div class="sec-title"><h2>' + esc(P.DAYS[ui.selDay]) + '</h2><small>' + (ds.planned ? mins(ds.planned) + ' مطالعه' : 'استراحت') + '</small></div>' + itemsHTML(ui.selDay, true) +
+      '<div class="chips"><button class="chip" data-act="open" data-v="additem">+ افزودن کار</button><button class="chip" data-act="comp">جبران عقب‌افتاده‌ها</button><button class="chip" data-act="copyplan">کپی برنامه</button></div>';
+    if (S.plan.tips && S.plan.tips.length) {
+      h += '<section class="card"><b>نکته‌ها</b><ul style="margin:6px 0 0;padding-inline-start:20px;color:var(--muted)">' + S.plan.tips.map(function (t) { return '<li>' + esc(fa(t)) + '</li>'; }).join('') + '</ul></section>';
+    }
+    h += '<div class="card" style="display:flex;flex-direction:column;gap:10px"><b>ساخت دوباره‌ی برنامه</b>' +
+      '<button class="btn navy block" data-act="rebuild">' + ic('clock') + ' ساخت سریع (بدون اینترنت)</button>' +
+      '<button class="btn amber block" data-act="aiplan"' + (ui.busy ? ' disabled' : '') + '>' + ic('spark') + (ui.busy ? ' در حال ساخت…' : ' ساخت با هوش مصنوعی') + '</button></div>';
+    return h;
+  }
+
+  function chatHTML() {
+    var m = S.chat.map(function (x) { return '<div class="msg ' + x.role + (x.err ? ' err' : '') + '">' + esc(fa(x.content)) + '</div>'; }).join('');
+    if (ui.busy) m += '<div class="msg assistant"><span class="dots"><i></i><i></i><i></i></span></div>';
+    return m;
+  }
+  function coachView() {
+    var h = '';
+    if (!hasAI()) {
+      h += '<div class="card empty"><h2>مربی هوشمند</h2><p>برای گفتگو با مربی، یک کلید هوش مصنوعی در تنظیمات وارد کن.</p><button class="btn amber" data-act="settings">' + ic('gear') + ' تنظیمات</button></div>';
+    }
+    h += '<div class="chat" id="chat" aria-live="polite">' + (S.chat.length ? chatHTML() : '<div class="msg assistant">سلام! من مربی amicore هستم. هر سؤال درسی یا مشکل برنامه‌ات را بپرس، یا بگو برنامه را عوض کنم.</div>') + '</div>';
+    h += '<div class="chips" id="qchips">' + ['برنامه‌ام را با توجه به امتحان نزدیک سنگین‌تر کن', 'امروز از کجا شروع کنم؟', 'برای تمرکز بیشتر چه کنم؟', 'یک مبحث را برایم ساده توضیح بده', 'برنامه را سبک‌تر کن'].map(function (q) { return '<button class="chip" data-act="ask" data-q="' + esc(q) + '">' + esc(q) + '</button>'; }).join('') + '</div>';
+    return h;
+  }
+
+  function progressView() {
+    if (!S.plan) return noPlanHTML();
+    var stats = P.weekStats(S.plan, S.done);
+    var tp = 0, td = 0, tc = 0, tf = 0, bySub = {};
+    stats.forEach(function (s) { tp += s.planned; td += s.done; tc += s.count; tf += s.finished; Object.keys(s.bySubject).forEach(function (k) { bySub[k] = (bySub[k] || 0) + s.bySubject[k]; }); });
+    var pct = tp ? Math.round(td / tp * 100) : 0;
+    var xi = P.levelInfo(xpTotal());
+    var h = '<section class="core lvl"><div class="lvl-badge"><b class="num">' + fa(xi.level) + '</b><span>سطح</span></div><div class="facts"><div><b style="font-size:1.15rem">' + levelTitle(xi.level) + '</b><small style="display:block;opacity:.75" class="num">' + fa(xi.xp) + ' از ' + fa(xi.next) + ' امتیاز</small></div><div class="xpbar"><i style="width:' + Math.round(Math.max(0.03, xi.pct) * 100) + '%"></i></div></div></section>' +
+      '<div class="tiles"><div class="tile"><b class="num">' + fa(streak()) + '</b><span>روز پشت‌سرهم</span></div>' +
+      '<div class="tile"><b class="num">' + fa(pct) + '٪</b><span>انجام‌شده‌ی هفته</span></div>' +
+      '<div class="tile"><b class="num">' + fa(Math.round(td / 6) / 10) + '</b><span>ساعت مطالعه</span></div></div>';
+    var goalMin = (S.goalHours || 10) * 60, gp = Math.min(1, td / goalMin);
+    h += '<section class="card"><div class="row-between"><b>هدف هفته</b><span class="num">' + mins(td) + ' از ' + mins(goalMin) + '</span></div><div class="goalbar"><i style="width:' + Math.round(gp * 100) + '%"></i></div>' +
+      '<p class="note">' + (gp >= 1 ? 'به هدف رسیدی! عالی است.' : 'مانده: ' + mins(goalMin - td)) + '</p></section>';
+    var max = Math.max.apply(null, stats.map(function (s) { return s.planned; }).concat([60]));
+    var W = 320, H = 150, bw = 26, gap = (W - 7 * bw) / 8, bars = '';
+    stats.forEach(function (s, i) {
+      var x = gap + (6 - i) * (bw + gap), hp = s.planned / max * 100, hd = s.done / max * 100;
+      bars += '<rect class="bar-plan" x="' + x + '" y="' + (118 - hp) + '" width="' + bw + '" height="' + Math.max(hp, 2) + '" rx="6"/>' +
+        (s.done ? '<rect class="bar-done" x="' + x + '" y="' + (118 - hd) + '" width="' + bw + '" height="' + hd + '" rx="6"/>' : '') +
+        '<text class="bar-lab" x="' + (x + bw / 2) + '" y="136">' + SHORT[i] + '</text>' +
+        (s.planned ? '<text class="bar-val" x="' + (x + bw / 2) + '" y="' + (118 - hp - 4) + '">' + fa(Math.round(s.planned / 6) / 10) + '</text>' : '');
+    });
+    h += '<section class="card"><div class="sec-title"><h2>ساعت‌های هفته</h2><small>برنامه‌ریزی‌شده و انجام‌شده</small></div><svg class="bars-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="نمودار ساعت مطالعه در هر روز">' + bars + '</svg></section>';
+    h += '<section class="card"><div class="sec-title"><h2>نقشه‌ی فعالیت</h2><small>۱۲ هفته‌ی اخیر</small></div>' + heatHTML() + '</section>';
+    var subs = Object.keys(bySub).sort(function (a, b) { return bySub[b] - bySub[a]; });
+    var maxS = subs.length ? bySub[subs[0]] : 1;
+    h += '<section class="card"><div class="sec-title"><h2>سهم هر درس</h2></div>' +
+      (subs.length ? subs.map(function (k) { return '<div class="subj-row"><span>' + esc(k) + '</span><div class="track"><div class="fill" style="width:' + Math.round(bySub[k] / maxS * 100) + '%"></div></div><small class="num">' + mins(bySub[k]).replace(' دقیقه', 'د').replace(' ساعت', 'س').replace(' و ', ' ') + '</small></div>'; }).join('') : '<p class="note">وقتی بخش‌ها را تیک بزنی، اینجا سهم هر درس را می‌بینی.</p>') + '</section>';
+    var qzs = (S.quizzes || []).slice(-5);
+    if (qzs.length) h += '<section class="card"><div class="sec-title"><h2>آزمون‌های اخیر</h2></div>' + qzs.reverse().map(function (x) { return '<div class="subj-row"><span>' + esc(x.subject) + '</span><div class="track"><div class="fill" style="width:' + Math.round(x.score / x.total * 100) + '%;background:var(--mint)"></div></div><small class="num">' + fa(x.score) + '/' + fa(x.total) + '</small></div>'; }).join('') + '</section>';
+    var mk = {}; (S.mistakes || []).forEach(function (x) { mk[x.subject] = (mk[x.subject] || 0) + 1; });
+    var mks = Object.keys(mk).sort(function (a, b) { return mk[b] - mk[a]; });
+    if (mks.length) h += '<section class="card"><div class="sec-title"><h2>نقطه‌ضعف‌ها</h2><small class="num">' + fa(S.mistakes.length) + ' سؤال غلط</small></div>' + mks.slice(0, 4).map(function (k) { return '<div class="subj-row"><span>' + esc(k) + '</span><div class="track"><div class="fill" style="width:' + Math.round(mk[k] / mk[mks[0]] * 100) + '%;background:var(--rose)"></div></div><small class="num">' + fa(mk[k]) + '</small></div>'; }).join('') + '<button class="btn navy block" data-act="open" data-v="mistakes">مرور اشتباه‌ها</button></section>';
+    var rp = S.report && S.report.wk === P.weekStart() ? S.report.text : '';
+    h += '<section class="card" style="display:flex;flex-direction:column;gap:10px"><b>گزارش هفته</b>' + (rp ? '<p class="what" style="white-space:pre-wrap;color:var(--ink)">' + esc(fa(rp)) + '</p>' : '<p class="note">یک تحلیل کوتاه از هفته‌ات و پیشنهاد برای هفته‌ی بعد.</p>') +
+      '<button class="btn navy block" data-act="report"' + (ui.rbusy ? ' disabled' : '') + '>' + ic('spark') + (ui.rbusy ? ' در حال نوشتن…' : rp ? ' گزارش تازه' : ' گزارش با هوش مصنوعی') + '</button></section>';
+    h += '<section class="card"><div class="row-between"><b>تمرکز با تایمر</b><span class="num">' + mins(Object.keys(S.focus).reduce(function (a, k) { return a + S.focus[k]; }, 0)) + '</span></div></section>';
+    h += '<button class="btn block" data-act="parentrep">' + ic('note') + ' کپی گزارش هفته برای والدین</button>';
+    var bl = badgeList(), got = bl.filter(function (b) { return b.ok; }).length;
+    h += '<section class="card"><div class="sec-title"><h2>دستاوردها</h2><small class="num">' + fa(got) + ' از ' + fa(bl.length) + '</small></div><div class="badges">' + bl.map(function (b) { return '<div class="badge2' + (b.ok ? ' on' : '') + '">' + ic(b.i) + '<b>' + b.t + '</b><span>' + b.d + '</span></div>'; }).join('') + '</div></section>';
+    return h;
+  }
+
+  function toolsView() {
+    var t = function (act, icon, title, sub, badge) { return '<button class="tool" data-act="open" data-v="' + act + '"><span class="tico">' + ic(icon) + '</span><b>' + title + '</b><span class="tsub">' + sub + '</span>' + (badge ? '<i class="badge num">' + fa(badge) + '</i>' : '') + '</button>'; };
+    var ne = nextExam(), ex = examScores(), av = avgOf(ex), dt = dueTopics().length;
+    return '<div class="hello"><h1>ابزارها</h1><p>برای درس خواندن هوشمندتر</p></div>' +
+      '<div class="sec-title"><h2>یادگیری فعال</h2></div><div class="tools">' +
+      t('tutor', 'bulb', 'درس‌یار هوشمند', 'راهنمایی مرحله‌ای، توضیح ساده و ترفند حفظی') +
+      t('quiz', 'quiz', 'آزمون‌ساز', 'تست با هوش مصنوعی، حتی زمان‌دار') +
+      t('summ', 'note', 'خلاصه‌ساز', 'خلاصه و فلش‌کارت از متن درس') +
+      t('cards', 'cards', 'فلش‌کارت‌ها', 'مرور با فاصله‌گذاری', dueCards().length) +
+      t('topics', 'brain', 'مرور مبحث‌ها', dt ? fa(dt) + ' مبحث امروز نوبت مرور است' : 'منحنی فراموشی را شکست بده', dt) +
+      t('mistakes', 'spark', 'مرور اشتباه‌ها', (S.mistakes || []).length ? 'سؤال‌های غلطت را دوباره حل کن' : 'هنوز اشتباهی ثبت نشده', (S.mistakes || []).length) + '</div>' +
+      '<div class="sec-title"><h2>پیگیری</h2></div><div class="tools">' +
+      t('grades', 'trend', 'کارنامه و نمرات', av != null ? 'میانگین ' + fnum(av) + ' از ۲۰' : 'نمره‌ها و درصد آزمون‌ها') +
+      t('hw', 'list', 'تکلیف‌ها', openHW().length ? fa(openHW().length) + ' مورد باز' : 'همه انجام شده', openHW().length) +
+      t('exams', 'target', 'امتحان‌ها', ne ? fa(ne.days) + ' روز تا ' + esc(ne.name) : 'تاریخ‌ها را ثبت کن') + '</div>' +
+      '<div class="sec-title"><h2>تمرکز و گفتگو</h2></div><div class="tools">' +
+      t('free', 'timer', 'تایمر تمرکز', 'همراه با صدای آرام‌بخش') +
+      t('coach', 'chat', 'پرسش از مربی', 'سؤال درسی یا تغییر برنامه') + '</div>';
+  }
+
+  function ovl(title, body, foot, cls) {
+    return '<div class="overlay ' + (cls || '') + '" role="dialog" aria-modal="true"><div class="top"><div class="logo">' + title + '</div><button class="icon-btn" data-act="close" aria-label="بستن">' + ic('x') + '</button></div><div class="body">' + body + '</div>' + (foot ? '<div class="foot">' + foot + '</div>' : '') + '</div>';
+  }
+  function needKey() { return '<div class="card empty"><p>برای این بخش به کلید هوش مصنوعی نیاز داریم.</p><button class="btn amber" data-act="settings">' + ic('gear') + ' تنظیمات</button></div>'; }
+
+  function quizHTML() {
+    var q = qz;
+    if (q.mode !== 'mistakes' && !hasAI()) return ovl('آزمون‌ساز', needKey());
+    if (q.phase === 'setup') {
+      var subs = (S.profile && S.profile.subjects || []).map(function (x) { return x.name; });
+      var body = '<h1 class="big">چه درسی را امتحان کنیم؟</h1>' + (q.source ? '<div class="card"><b>آزمون از متن خودت</b><p class="note">سؤال‌ها فقط از متنی که در خلاصه‌ساز گذاشتی ساخته می‌شوند.</p><button class="btn ghost" data-act="qnosrc">حذف متن و آزمون عمومی</button></div>' : '') +
+        (subs.length ? '<div class="chips">' + subs.map(function (n) { return '<button class="chip" data-act="qsub" data-v="' + esc(n) + '" aria-pressed="' + (q.subject === n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') +
+        '<div class="field"><label for="qz-subject">درس</label><input id="qz-subject" value="' + esc(q.subject) + '" autocomplete="off"></div>' +
+        '<div class="field"><label for="qz-topic">مبحث (اختیاری)</label><input id="qz-topic" value="' + esc(q.topic) + '" placeholder="مثلاً فصل ۲، حرکت شناسی" autocomplete="off"></div>' +
+        '<div class="field"><span class="lab2">تعداد سؤال</span><div class="seg-ctl">' + [5, 10, 15, 20].map(function (n) { return '<button data-act="qn" data-v="' + n + '" aria-pressed="' + (q.n === n) + '">' + fa(n) + ' سؤال</button>'; }).join('') + '</div></div>' +
+        '<div class="field"><span class="lab2">حالت</span><div class="seg-ctl"><button data-act="qtimed" data-v="0" aria-pressed="' + !q.timed + '">راحت</button><button data-act="qtimed" data-v="1" aria-pressed="' + !!q.timed + '">زمان‌دار (۱ دقیقه برای هر سؤال)</button></div></div>' +
+        '<div class="field"><span class="lab2">سطح</span><div class="seg-ctl">' + ['آسان', 'متوسط', 'سخت', 'کنکوری'].map(function (n) { return '<button data-act="qlevel" data-v="' + n + '" aria-pressed="' + (q.level === n) + '">' + n + '</button>'; }).join('') + '</div></div>' +
+        (q.err ? '<div class="status bad">' + esc(q.err) + '</div>' : '');
+      return ovl('آزمون‌ساز', body, '<button class="btn amber" data-act="qstart">شروع آزمون</button>');
+    }
+    if (q.phase === 'loading') return ovl('آزمون‌ساز', '<div class="empty"><span class="dots"><i></i><i></i><i></i></span><p>در حال ساختن سؤال‌ها…</p></div>');
+    if (q.phase === 'run') {
+      if (q.waiting || !q.qs[q.i]) return ovl('آزمون', '<div class="empty"><span class="dots"><i></i><i></i><i></i></span><p>سؤال بعدی در حال ساخته شدن است…</p></div>');
+      var cur = q.qs[q.i], answered = q.picked != null, tot = q.n || q.qs.length;
+      var tl = q.timed ? Math.max(0, Math.ceil((q.deadline - Date.now()) / 1000)) : 0;
+      var b = '<div class="row-between"><b class="num">سؤال ' + fa(q.i + 1) + ' از ' + fa(tot) + '</b>' + (q.timed ? '<span class="timer-pill num" id="qt">' + fa(Math.floor(tl / 60) + ':' + ('0' + tl % 60).slice(-2)) + '</span>' : '<span class="note num">امتیاز ' + fa(q.score) + '</span>') + '</div><div class="steps" style="padding:0">' + Array.apply(null, Array(tot)).map(function (_, i) { return '<i class="' + (i <= q.i ? 'on' : '') + '"></i>'; }).join('') + '</div>' +
+        '<h2 class="qtext">' + esc(fa(cur.q)) + '</h2><div class="opts">' + cur.options.map(function (o, i) {
+          var cls = 'opt' + (answered ? (i === cur.answer ? ' right' : i === q.picked ? ' wrong' : '') : '');
+          return '<button class="' + cls + '" data-act="qpick" data-i="' + i + '"' + (answered ? ' disabled' : '') + '>' + esc(fa(o)) + '</button>';
+        }).join('') + '</div>' +
+        (answered && cur.explain ? '<div class="card"><b>' + (q.picked === cur.answer ? 'درست گفتی!' : 'جواب درست گزینه‌ی ' + fa(cur.answer + 1) + ' بود') + '</b><p class="what">' + esc(fa(cur.explain)) + '</p></div>' : '');
+      return ovl('آزمون', b, answered ? '<button class="btn amber" data-act="qnext">' + (q.i + 1 < q.qs.length || q.loadingMore ? 'سؤال بعدی' : 'دیدن نتیجه') + '</button>' : '');
+    }
+    var pct = Math.round(q.score / Math.max(1, q.qs.length) * 100);
+    var wrong = q.wrong.map(function (w) { return '<div class="card"><b>' + esc(fa(w.q)) + '</b><p class="what">جواب درست: ' + esc(fa(w.options[w.answer])) + '</p>' + (w.explain ? '<p class="what">' + esc(fa(w.explain)) + '</p>' : '') + '</p></div>'; }).join('');
+    return ovl('نتیجه', '<div class="core" style="grid-template-columns:1fr;text-align:center"><div style="font-size:3rem;font-weight:800" class="num">' + fa(q.score) + '/' + fa(q.qs.length) + '</div><div>' + (pct >= 80 ? 'عالی بود! مسلطی.' : pct >= 50 ? 'خوب بود. چند مورد را دوباره مرور کن.' : 'اشکالی ندارد. غلط‌ها بهترین معلم‌اند.') + '</div></div>' +
+      (q.wrong.length ? '<div class="sec-title"><h2>سؤال‌های غلط</h2></div>' + wrong : ''),
+      (q.mode === 'mistakes' ? '' : '<button class="btn" data-act="qagain">آزمون تازه</button>') + '<button class="btn amber" data-act="close">تمام</button>');
+  }
+
+  function summHTML() {
+    if (!hasAI()) return ovl('خلاصه‌ساز', needKey());
+    var r = sm.res;
+    var body = '<h1 class="big">متن درس را بچسبان</h1><div class="field"><label for="sm-text">متن</label><textarea id="sm-text" rows="7" style="max-height:none" placeholder="متن کتاب یا جزوه را اینجا بچسبان">' + esc(sm.text) + '</textarea></div>' +
+      (sm.err ? '<div class="status bad">' + esc(sm.err) + '</div>' : '') +
+      '<button class="btn amber block" data-act="smgo"' + (sm.busy ? ' disabled' : '') + '>' + ic('spark') + (sm.busy ? ' در حال خلاصه کردن…' : ' خلاصه کن') + '</button>';
+    if (r) {
+      body += '<section class="card"><b>خلاصه</b><p class="what" style="white-space:pre-wrap">' + esc(fa(r.summary)) + '</p></section>';
+      if (r.points.length) body += '<section class="card"><b>نکته‌های کلیدی</b><ul style="margin:6px 0 0;padding-inline-start:20px;color:var(--muted)">' + r.points.map(function (x) { return '<li>' + esc(fa(x)) + '</li>'; }).join('') + '</ul></section>';
+      body += '<button class="btn block" data-act="smquiz">' + ic('quiz') + ' ساخت آزمون از همین متن</button>';
+      if (r.cards.length) body += '<button class="btn navy block" data-act="smcards">' + ic('cards') + ' افزودن ' + fa(r.cards.length) + ' فلش‌کارت به مرورم</button>';
+    }
+    return ovl('خلاصه‌ساز', body);
+  }
+
+  function cardsHTML() {
+    var all = S.cards || [], cur = cd && cd.queue[0];
+    var body = '';
+    if (cur) {
+      body += '<div class="row-between"><b class="num">' + fa(cd.queue.length) + ' کارت مانده</b><span class="note num">' + fa(all.length) + ' کارت در کل</span></div>' +
+        '<button class="flash' + (cd.flip ? ' back' : '') + '" data-act="cflip" aria-label="برگرداندن کارت"><small>' + (cd.flip ? 'جواب' : 'سؤال') + '</small><span>' + esc(fa(cd.flip ? cur.back : cur.front)) + '</span>' + (cd.flip ? '' : '<em>برای دیدن جواب بزن</em>') + '</button>';
+    } else {
+      body += '<div class="card empty"><h2>' + (all.length ? 'مرور امروز تمام شد' : 'هنوز کارتی نداری') + '</h2><p>' + (all.length ? 'کارت‌ها طبق برنامه‌ی فاصله‌گذاری دوباره می‌آیند.' : 'با خلاصه‌ساز کارت بساز یا پایین خودت اضافه کن.') + '</p></div>';
+    }
+    body += '<section class="card" style="display:flex;flex-direction:column;gap:8px"><b>افزودن کارت</b><div class="field"><label for="cd-front">سؤال یا واژه</label><input id="cd-front" autocomplete="off"></div><div class="field"><label for="cd-back">جواب</label><input id="cd-back" autocomplete="off"></div><button class="btn block" data-act="cadd">' + ic('plus') + ' افزودن</button></section>';
+    var foot = cur && cd.flip ? '<button class="btn danger" data-act="cno">نمی‌دانستم</button><button class="btn amber" data-act="cyes">بلد بودم</button>' : '';
+    return ovl('فلش‌کارت‌ها', body, foot);
+  }
+
+  function hwHTML() {
+    var list = (S.homework || []).slice().sort(function (a, b) { return (a.done - b.done) || String(a.due || '9').localeCompare(String(b.due || '9')); });
+    var body = '<section class="card" style="display:flex;flex-direction:column;gap:8px"><div class="field"><label for="hw-text">تکلیف جدید</label><input id="hw-text" placeholder="مثلاً حل تمرین‌های صفحه‌ی ۴۲ ریاضی" autocomplete="off"></div>' +
+      '<div class="field"><label for="hw-due">مهلت (اختیاری)</label><input id="hw-due" type="date" style="direction:ltr;text-align:right"></div><button class="btn amber block" data-act="hwadd">' + ic('plus') + ' افزودن</button></section>';
+    body += list.length ? '<div class="list">' + list.map(function (h) {
+      var d = h.due ? P.daysUntil(h.due) : null;
+      var when = d == null ? '' : d < 0 ? 'گذشته' : d === 0 ? 'امروز' : fa(d) + ' روز دیگر';
+      return '<div class="item' + (h.done ? ' done' : '') + '"><button class="box" data-act="hwtoggle" data-id="' + h.id + '" aria-label="انجام شد" aria-pressed="' + !!h.done + '">' + ic('check') + '</button><div class="meta"><div class="subj">' + esc(h.text) + '</div>' + (when ? '<div class="what' + (d < 0 && !h.done ? ' late' : '') + '">' + when + '</div>' : '') + '</div></div>';
+    }).join('') + '</div>' : '<div class="empty"><p>تکلیفی ثبت نشده است.</p></div>';
+    if ((S.homework || []).some(function (h) { return h.done; })) body += '<button class="btn ghost block" data-act="hwclear">پاک کردن انجام‌شده‌ها</button>';
+    return ovl('تکلیف‌ها', body);
+  }
+
+  function examsHTML() {
+    var list = (S.exams || []).slice().sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
+    var body = '<section class="card" style="display:flex;flex-direction:column;gap:8px"><div class="field"><label for="ex-name">نام امتحان</label><input id="ex-name" placeholder="مثلاً ریاضی میان‌ترم" autocomplete="off"></div>' +
+      '<div class="field"><label for="ex-date">تاریخ (میلادی)</label><input id="ex-date" type="date" style="direction:ltr;text-align:right"></div><button class="btn amber block" data-act="exadd">' + ic('plus') + ' افزودن</button></section>';
+    body += list.length ? list.map(function (e) {
+      var d = P.daysUntil(e.date), busy = ui.exbusy === e.id;
+      return '<div class="card" style="display:flex;flex-direction:column;gap:10px"><div class="row-between"><div style="min-width:0"><b>' + esc(e.name) + '</b><div class="what num" style="direction:ltr;text-align:right">' + esc(e.date) + '</div></div><div style="display:flex;align-items:center;gap:8px"><b class="num">' + (d < 0 ? 'گذشته' : d === 0 ? 'امروز' : fa(d) + ' روز') + '</b><button class="icon-btn" data-act="exdel" data-id="' + e.id + '" aria-label="حذف ' + esc(e.name) + '">' + ic('trash') + '</button></div></div>' +
+        (d >= 0 ? '<button class="btn navy block" data-act="explan" data-id="' + e.id + '"' + (busy ? ' disabled' : '') + '>' + ic('spark') + (busy ? ' در حال نوشتن…' : e.plan ? ' برنامه‌ی مرور تازه' : ' برنامه‌ی مرور با هوش مصنوعی') + '</button>' : '') +
+        (e.plan ? '<div class="list">' + e.plan.map(function (x) { return '<div class="item" style="grid-template-columns:7rem 1fr"><b class="subj">' + esc(fa(x.when)) + '</b><div class="what">' + esc(fa(x.focus)) + '</div></div>'; }).join('') + '</div>' : '') + '</div>';
+    }).join('') : '<div class="empty"><p>هنوز امتحانی ثبت نشده. با ثبت تاریخ، برنامه سنگین‌تر و امتحانی می‌شود.</p></div>';
+    return ovl('امتحان‌ها', body);
+  }
+
+  function addItemHTML() {
+    var subs = (S.profile && S.profile.subjects || []).map(function (x) { return x.name; });
+    var body = '<h1 class="big">کار تازه برای ' + esc(P.DAYS[ui.selDay]) + '</h1>' +
+      (subs.length ? '<div class="chips">' + subs.map(function (n) { return '<button class="chip" data-act="nisub" data-v="' + esc(n) + '" aria-pressed="' + (ni.subject === n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') +
+      '<div class="field"><label for="ni-subject">درس</label><input id="ni-subject" value="' + esc(ni.subject) + '" autocomplete="off"></div>' +
+      '<div class="field"><label for="ni-task">کار مشخص (اختیاری)</label><input id="ni-task" value="' + esc(ni.task) + '" placeholder="مثلاً حل ۱۰ تست" autocomplete="off"></div>' +
+      '<div class="field"><label for="ni-start">ساعت شروع</label><input id="ni-start" type="time" value="' + esc(ni.start) + '" style="direction:ltr;text-align:right"></div>' +
+      '<div class="field"><span class="lab2">مدت</span><div class="seg-ctl">' + [30, 45, 60, 90].map(function (v) { return '<button data-act="nidur" data-v="' + v + '" aria-pressed="' + (ni.dur === v) + '">' + fa(v) + ' دقیقه</button>'; }).join('') + '</div></div>';
+    return ovl('افزودن کار', body, '<button class="btn amber" data-act="niadd">افزودن به برنامه</button>');
+  }
+  function freeHTML() {
+    var subs = (S.profile && S.profile.subjects || []).map(function (x) { return x.name; });
+    var body = '<h1 class="big">روی چه چیزی تمرکز کنیم؟</h1>' +
+      (subs.length ? '<div class="chips">' + subs.map(function (n) { return '<button class="chip" data-act="frsub" data-v="' + esc(n) + '" aria-pressed="' + (fr.subject === n) + '">' + esc(n) + '</button>'; }).join('') + '</div>' : '') +
+      '<div class="field"><label for="fr-subject">موضوع</label><input id="fr-subject" value="' + esc(fr.subject) + '" autocomplete="off"></div>' +
+      '<div class="field"><span class="lab2">مدت</span><div class="seg-ctl">' + [15, 25, 45, 60].map(function (v) { return '<button data-act="frdur" data-v="' + v + '" aria-pressed="' + (fr.dur === v) + '">' + fa(v) + ' دقیقه</button>'; }).join('') + '</div></div>';
+    return ovl('تایمر تمرکز', body, '<button class="btn amber" data-act="frstart">' + ic('play') + ' شروع</button>');
+  }
+
+  var TU_LABEL = { solve: 'حل مسئله', explain: 'توضیح ساده', feynman: 'من توضیح می‌دهم', mnemonic: 'ترفند حفظی' };
+  var TU_HINT = { solve: 'مسئله را بنویس. اول فقط راهنمایی می‌گیری، پاسخ کامل بعداً.', explain: 'مبحثی را که نمی‌فهمی بنویس.', feynman: 'مبحث را بنویس و بعد با زبان خودت توضیح بده؛ مربی نمره می‌دهد.', mnemonic: 'چیزی را که باید حفظ کنی بنویس.' };
+  function tutorHTML() {
+    if (!hasAI()) return ovl('درس‌یار هوشمند', needKey());
+    var subs = (S.profile && S.profile.subjects || []).map(function (x) { return x.name; });
+    var b = '<div class="seg-ctl wrap">' + Object.keys(TU_LABEL).map(function (k) { return '<button data-act="tumode" data-v="' + k + '" aria-pressed="' + (tu.mode === k) + '">' + TU_LABEL[k] + '</button>'; }).join('') + '</div>' +
+      '<p class="note">' + TU_HINT[tu.mode] + '</p>' +
+      (subs.length ? '<div class="chips">' + subs.map(function (n) { return '<button class="chip" data-act="tusub" data-v="' + esc(n) + '" aria-pressed="' + (tu.subject === n) + '">' + sdot(n) + esc(n) + '</button>'; }).join('') + '</div>' : '') +
+      '<div class="field"><label for="tu-subject">درس</label><input id="tu-subject" value="' + esc(tu.subject) + '" autocomplete="off"></div>' +
+      '<div class="field"><label for="tu-text">' + (tu.mode === 'solve' ? 'مسئله' : tu.mode === 'mnemonic' ? 'مطلب برای حفظ' : 'مبحث') + '</label><textarea id="tu-text" rows="' + (tu.mode === 'solve' ? 4 : 2) + '" style="max-height:none">' + esc(tu.text) + '</textarea></div>' +
+      (tu.mode === 'feynman' ? '<div class="field"><label for="tu-mine">توضیح خودت</label><textarea id="tu-mine" rows="5" style="max-height:none" placeholder="طوری بنویس که انگار به دوستت درس می‌دهی">' + esc(tu.mine) + '</textarea></div>' : '') +
+      (tu.err ? '<div class="status bad">' + esc(tu.err) + '</div>' : '') +
+      '<button class="btn amber block" data-act="tugo"' + (tu.busy ? ' disabled' : '') + '>' + ic('spark') + (tu.busy ? ' در حال فکر کردن…' : tu.mode === 'solve' ? ' راهنمایی بده' : tu.mode === 'feynman' ? ' ارزیابی کن' : ' بگو') + '</button>';
+    var r = tu.res;
+    if (r && r.mode === tu.mode) {
+      if (r.mode === 'solve') {
+        b += r.hints.slice(0, tu.hintN).map(function (h, i) { return '<section class="card hint"><b>راهنمایی ' + fa(i + 1) + '</b><p class="what">' + esc(fa(h)) + '</p></section>'; }).join('');
+        if (tu.hintN < r.hints.length) b += '<button class="btn navy block" data-act="tuhint">' + ic('bulb') + ' راهنمایی بعدی</button>';
+        else if (!tu.showSol) b += '<button class="btn navy block" data-act="tusol">نمایش پاسخ کامل</button>';
+        if (tu.showSol) b += '<section class="card"><b>پاسخ کامل</b><p class="what" style="white-space:pre-wrap;color:var(--ink)">' + esc(fa(r.solution)) + '</p>' + (r.check ? '<p class="note">بررسی: ' + esc(fa(r.check)) + '</p>' : '') + '</section>';
+      } else if (r.mode === 'explain') {
+        b += '<section class="card"><b>توضیح</b><p class="what" style="white-space:pre-wrap;color:var(--ink)">' + esc(fa(r.text)) + '</p></section>' + (r.example ? '<section class="card"><b>مثال</b><p class="what" style="white-space:pre-wrap">' + esc(fa(r.example)) + '</p></section>' : '') + (r.analogy ? '<section class="card"><b>تشبیه</b><p class="what">' + esc(fa(r.analogy)) + '</p></section>' : '');
+      } else if (r.mode === 'feynman') {
+        b += '<section class="core" style="grid-template-columns:auto 1fr"><div class="lvl-badge"><b class="num">' + fa(r.score) + '</b><span>از ۱۰</span></div><div class="facts"><b>' + (r.score >= 8 ? 'عالی توضیح دادی!' : r.score >= 5 ? 'خوب بود، چند جا کامل نیست' : 'هنوز نیاز به مرور داری') + '</b></div></section>' +
+          (r.good.length ? '<section class="card"><b>درست گفتی</b><ul class="ul">' + r.good.map(function (x) { return '<li>' + esc(fa(x)) + '</li>'; }).join('') + '</ul></section>' : '') +
+          (r.missing.length ? '<section class="card"><b>جاافتاده یا غلط</b><ul class="ul">' + r.missing.map(function (x) { return '<li>' + esc(fa(x)) + '</li>'; }).join('') + '</ul></section>' : '') +
+          (r.fix ? '<section class="card"><b>نسخه‌ی اصلاح‌شده</b><p class="what" style="white-space:pre-wrap">' + esc(fa(r.fix)) + '</p></section>' : '');
+      } else {
+        b += '<section class="card flashy"><b>' + esc(fa(r.mnemonic)) + '</b></section>' + (r.how ? '<p class="note">' + esc(fa(r.how)) + '</p>' : '') + '<button class="btn block" data-act="tucard">' + ic('cards') + ' ذخیره به‌عنوان فلش‌کارت</button>';
+      }
+    }
+    return ovl('درس‌یار هوشمند', b);
+  }
+
+  function topicsHTML() {
+    var due = dueTopics(), all = (S.topics || []).slice().sort(function (a, b) { return a.due.localeCompare(b.due); });
+    if (tp.mode === 'review') {
+      var cur = tp.queue[0];
+      if (!cur) return ovl('مرور مبحث‌ها', '<div class="card empty"><h2>مرور امروز تمام شد</h2><p>مبحث‌ها طبق منحنی فراموشی دوباره سراغت می‌آیند.</p><button class="btn amber" data-act="tpback">برگشت</button></div>');
+      return ovl('مرور مبحث‌ها', '<div class="row-between"><b class="num">' + fa(tp.queue.length) + ' مبحث مانده</b><span class="note">اول از حفظ توضیح بده</span></div>' +
+        '<section class="flash back"><small>' + esc(cur.subject) + '</small><span>' + esc(cur.name) + '</span>' + (cur.note ? '<em>' + esc(cur.note) + '</em>' : '<em>هرچه از این مبحث یادت هست بگو، بعد صادقانه نمره بده</em>') + '</section>',
+        '<button class="btn danger" data-act="tpr" data-v="forgot">فراموش کرده بودم</button><button class="btn" data-act="tpr" data-v="hard">سخت بود</button><button class="btn amber" data-act="tpr" data-v="easy">راحت بود</button>');
+    }
+    var subs = (S.profile && S.profile.subjects || []).map(function (x) { return x.name; });
+    var f = tp.f;
+    var body = '<section class="card"><p class="note">هر مبحثی را که یاد می‌گیری اینجا ثبت کن. amicore بر اساس منحنی فراموشی، ۱، ۳، ۷، ۱۶ و ۳۵ روز بعد مرورش را یادآوری می‌کند.</p></section>' +
+      (due.length ? '<button class="btn amber block" data-act="tpstart">' + ic('play') + ' مرور امروز (' + fa(due.length) + ' مبحث)</button>' : '') +
+      '<section class="card" style="display:flex;flex-direction:column;gap:8px"><b>ثبت مبحث تازه</b>' +
+      (subs.length ? '<div class="chips">' + subs.map(function (n) { return '<button class="chip" data-act="tpsub" data-v="' + esc(n) + '" aria-pressed="' + (f.subject === n) + '">' + sdot(n) + esc(n) + '</button>'; }).join('') + '</div>' : '') +
+      '<div class="field"><label for="tp-subject">درس</label><input id="tp-subject" value="' + esc(f.subject) + '" autocomplete="off"></div>' +
+      '<div class="field"><label for="tp-name">مبحث</label><input id="tp-name" value="' + esc(f.name) + '" placeholder="مثلاً قانون دوم نیوتون" autocomplete="off"></div>' +
+      '<div class="field"><label for="tp-note">یادداشت کوتاه (اختیاری)</label><input id="tp-note" value="' + esc(f.note) + '" placeholder="نکته‌ای که نباید فراموش شود" autocomplete="off"></div>' +
+      '<button class="btn navy block" data-act="tpadd">' + ic('plus') + ' ثبت</button></section>';
+    body += all.length ? '<div class="list">' + all.map(function (t) {
+      return '<div class="item edit" style="grid-template-columns:1fr auto"><div class="meta"><div class="subj">' + sdot(t.subject) + esc(t.name) + '</div><div class="what">' + esc(t.subject) + ' · مرور بعدی: ' + whenText(t.due) + '</div><div class="pips" aria-label="تسلط">' + [0, 1, 2, 3, 4, 5].map(function (i) { return '<i class="' + (i <= t.stage - 1 ? 'on' : '') + '"></i>'; }).join('') + '</div></div><button class="icon-btn sm" data-act="tpdel" data-id="' + t.id + '" aria-label="حذف ' + esc(t.name) + '">' + ic('trash') + '</button></div>';
+    }).join('') + '</div>' : '<div class="empty"><p>هنوز مبحثی ثبت نشده.</p></div>';
+    return ovl('مرور مبحث‌ها', body);
+  }
+
+  function gradesHTML() {
+    var ex = examScores(), av = avgOf(ex), subs = (S.profile && S.profile.subjects || []).map(function (x) { return x.name; });
+    var body = '';
+    if (ex.length) {
+      var by = {}; ex.forEach(function (g) { (by[g.subject] = by[g.subject] || []).push(g); });
+      var names = Object.keys(by).sort(function (a, b) { return avgOf(by[b]) - avgOf(by[a]); });
+      body += '<div class="tiles"><div class="tile"><b class="num">' + fnum(av) + '</b><span>میانگین کل از ۲۰</span></div><div class="tile"><b class="num">' + fa(ex.length) + '</b><span>امتحان ثبت‌شده</span></div><div class="tile"><b class="num">' + fnum(avgOf(by[names[0]])) + '</b><span>بهترین: ' + esc(names[0]) + '</span></div></div>';
+      var last = ex.slice().sort(function (a, b) { return a.date.localeCompare(b.date); }).slice(-12), W = 320, H = 150, lo = Math.max(0, Math.floor(Math.min.apply(null, last.map(function (g) { return g.score; }).concat([S.targetAvg])) - 2)), pts = '', dots = '';
+      last.forEach(function (g, i) {
+        var x = last.length === 1 ? W / 2 : W - 20 - i * ((W - 40) / (last.length - 1)), y = 14 + (20 - g.score) / (20 - lo) * (H - 38);
+        pts += x.toFixed(1) + ',' + y.toFixed(1) + ' '; dots += '<circle class="ln-dot" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4.5"><title>' + esc(g.subject) + ' ' + g.score + '</title></circle>';
+      });
+      var ty = 14 + (20 - S.targetAvg) / (20 - lo) * (H - 38);
+      body += '<section class="card"><div class="sec-title"><h2>روند نمره‌ها</h2><small>خط چین: هدف</small></div><svg class="bars-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="نمودار روند نمره‌ها"><line class="ln-target" x1="8" x2="' + (W - 8) + '" y1="' + ty.toFixed(1) + '" y2="' + ty.toFixed(1) + '"/><polyline class="ln" points="' + pts.trim() + '"/>' + dots +
+        '<text class="bar-lab" x="12" y="' + (H - 6) + '">' + fa(lo) + '</text><text class="bar-lab" x="12" y="12">۲۰</text></svg></section>';
+      body += '<section class="card"><div class="sec-title"><h2>میانگین هر درس</h2></div>' + names.map(function (k) { var a = avgOf(by[k]); return '<div class="subj-row"><span>' + sdot(k) + esc(k) + '</span><div class="track"><div class="fill" style="width:' + Math.round(a / 20 * 100) + '%;background:' + subjColor(k) + '"></div></div><small class="num">' + fnum(a) + '</small></div>'; }).join('') + '</section>';
+    }
+    var k = gr.k, need = ex.length ? (S.targetAvg * (ex.length + k) - ex.reduce(function (a, g) { return a + g.score; }, 0)) / k : null;
+    body += '<section class="card" style="display:flex;flex-direction:column;gap:10px"><div class="row-between"><b>هدف میانگین</b><b class="num" id="tg-v">' + fnum(S.targetAvg) + '</b></div><input class="range" type="range" id="gr-target" min="10" max="20" step="0.25" value="' + S.targetAvg + '">' +
+      '<span class="lab2">چند امتحان دیگر مانده؟</span><div class="seg-ctl">' + [1, 2, 3, 4, 5].map(function (v) { return '<button data-act="grk" data-v="' + v + '" aria-pressed="' + (gr.k === v) + '">' + fa(v) + '</button>'; }).join('') + '</div>' +
+      (need == null ? '<p class="note">اولین نمره‌ات را ثبت کن تا محاسبه کنم.</p>' : need > 20 ? '<p class="status bad">با این هدف، حتی با نمره‌ی ۲۰ هم نمی‌رسی. هدف را کمی پایین‌تر بگذار.</p>' : need <= 0 ? '<p class="status ok">هدفت تضمین شده است!</p>' : '<p class="what" style="color:var(--ink)">برای رسیدن به میانگین هدف، در ' + fa(k) + ' امتحان بعدی باید میانگین <b class="num">' + fnum(need) + '</b> بگیری.</p>') + '</section>';
+    body += '<section class="card" style="display:flex;flex-direction:column;gap:10px"><b>ثبت نمره</b><div class="seg-ctl"><button data-act="grkind" data-v="exam" aria-pressed="' + (gr.kind === 'exam') + '">امتحان (از ۲۰)</button><button data-act="grkind" data-v="test" aria-pressed="' + (gr.kind === 'test') + '">آزمون تستی (درصد)</button></div>' +
+      (subs.length ? '<div class="chips">' + subs.map(function (n) { return '<button class="chip" data-act="grsub" data-v="' + esc(n) + '" aria-pressed="' + (gr.subject === n) + '">' + sdot(n) + esc(n) + '</button>'; }).join('') + '</div>' : '') +
+      '<div class="field"><label for="gr-subject">درس</label><input id="gr-subject" value="' + esc(gr.subject) + '" autocomplete="off"></div>' +
+      (gr.kind === 'exam' ? '<div class="field"><label for="gr-score">نمره از ۲۰</label><input id="gr-score" type="number" inputmode="decimal" min="0" max="20" step="0.25" value="' + esc(gr.score) + '" style="direction:ltr;text-align:right"></div>' :
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><div class="field"><label for="gr-total">کل سؤال</label><input id="gr-total" type="number" inputmode="numeric" value="' + esc(gr.total) + '" style="direction:ltr;text-align:right"></div><div class="field"><label for="gr-correct">درست</label><input id="gr-correct" type="number" inputmode="numeric" value="' + esc(gr.correct) + '" style="direction:ltr;text-align:right"></div><div class="field"><label for="gr-wrong">غلط</label><input id="gr-wrong" type="number" inputmode="numeric" value="' + esc(gr.wrong) + '" style="direction:ltr;text-align:right"></div></div><p class="note">درصد با نمره‌ی منفی (هر ۳ غلط، ۱ درست) حساب می‌شود.</p>') +
+      '<div class="field"><label for="gr-date">تاریخ</label><input id="gr-date" type="date" value="' + esc(gr.date) + '" style="direction:ltr;text-align:right"></div><button class="btn amber block" data-act="gradd">' + ic('plus') + ' ثبت</button></section>';
+    var hist = (S.grades || []).slice().sort(function (a, b) { return b.date.localeCompare(a.date); }).slice(0, 20);
+    if (hist.length) body += '<div class="list">' + hist.map(function (g) {
+      return '<div class="item edit" style="grid-template-columns:1fr auto auto"><div class="meta"><div class="subj">' + sdot(g.subject) + esc(g.subject) + '</div><div class="what num" style="direction:ltr;text-align:right">' + esc(g.date) + '</div></div><b class="num">' + (g.kind === 'exam' ? fnum(g.score) + ' / ۲۰' : fnum(testPct(g)) + '٪') + '</b><button class="icon-btn sm" data-act="grdel" data-id="' + g.id + '" aria-label="حذف نمره">' + ic('trash') + '</button></div>';
+    }).join('') + '</div>';
+    return ovl('کارنامه و نمرات', body);
+  }
+
+  function overlayHTML() {
+    switch (ui.overlay) {
+      case 'onboard': return onboardHTML();
+      case 'settings': return settingsHTML();
+      case 'focus': return focusHTML();
+      case 'quiz': return quizHTML();
+      case 'summ': return summHTML();
+      case 'cards': return cardsHTML();
+      case 'hw': return hwHTML();
+      case 'exams': return examsHTML();
+      case 'additem': return addItemHTML();
+      case 'free': return freeHTML();
+      case 'tutor': return tutorHTML();
+      case 'topics': return topicsHTML();
+      case 'grades': return gradesHTML();
+    }
+    return '';
+  }
+
+  /* ---------- overlays ---------- */
+  var GRADES = ['هفتم', 'هشتم', 'نهم', 'دهم', 'یازدهم', 'دوازدهم', 'کنکوری'];
+  var FIELDS = ['ریاضی', 'تجربی', 'انسانی'];
+  var PRESET_SUBJECTS = {
+    junior: ['ریاضی', 'علوم', 'ادبیات فارسی', 'انگلیسی', 'عربی', 'مطالعات اجتماعی', 'دینی'],
+    'ریاضی': ['ریاضی', 'هندسه', 'فیزیک', 'شیمی', 'ادبیات فارسی', 'عربی', 'انگلیسی', 'دینی'],
+    'تجربی': ['ریاضی', 'زیست‌شناسی', 'فیزیک', 'شیمی', 'ادبیات فارسی', 'عربی', 'انگلیسی', 'دینی'],
+    'انسانی': ['ریاضی و آمار', 'ادبیات فارسی', 'عربی', 'تاریخ', 'جغرافیا', 'جامعه‌شناسی', 'فلسفه و منطق', 'انگلیسی']
+  };
+  function presetsFor(d) { return d.grade && ['هفتم', 'هشتم', 'نهم'].indexOf(d.grade) >= 0 ? PRESET_SUBJECTS.junior : PRESET_SUBJECTS[d.field] || PRESET_SUBJECTS['تجربی']; }
+
+  function startOnboard() {
+    var p = S.profile || {};
+    ob = {
+      step: 0,
+      d: {
+        name: p.name || '', grade: p.grade || '', field: p.field || '',
+        subjects: (p.subjects || []).map(function (s) { return { name: s.name, level: s.level }; }),
+        days: p.days || [true, true, true, true, true, false, false], minutes: p.minutes || 120,
+        start: p.start || '16:00', session: p.session || 50, rest: p.rest == null ? 10 : p.rest, examDate: p.examDate || ''
+      }
+    };
+    ui.overlay = 'onboard'; render();
+  }
+
+  function onboardHTML() {
+    var d = ob.d, s = ob.step, body = '', canNext = true;
+    var top = '<div class="top"><div class="logo">ami<i>core</i></div>' + (S.profile ? '<button class="icon-btn" data-act="close" aria-label="بستن">' + ic('x') + '</button>' : '') + '</div>';
+    var steps = '<div class="steps">' + [0, 1, 2, 3].map(function (i) { return '<i class="' + (i <= s ? 'on' : '') + '"></i>'; }).join('') + '</div>';
+    if (s === 0) {
+      body = '<h1 class="big">اول با هم آشنا شویم</h1><div class="field"><label for="ob-name">اسمت چیست؟</label><input id="ob-name" value="' + esc(d.name) + '" autocomplete="off"></div>' +
+        '<div class="field"><span class="lab2">کلاس چندمی؟</span><div class="chips">' + GRADES.map(function (g) { return '<button class="chip" data-act="grade" data-v="' + g + '" aria-pressed="' + (d.grade === g) + '">' + g + '</button>'; }).join('') + '</div></div>';
+      if (['دهم', 'یازدهم', 'دوازدهم', 'کنکوری'].indexOf(d.grade) >= 0) {
+        body += '<div class="field"><span class="lab2">رشته</span><div class="chips">' + FIELDS.map(function (g) { return '<button class="chip" data-act="field" data-v="' + g + '" aria-pressed="' + (d.field === g) + '">' + g + '</button>'; }).join('') + '</div></div>';
+      }
+      canNext = !!d.grade;
+    } else if (s === 1) {
+      var names = d.subjects.map(function (x) { return x.name; });
+      body = '<h1 class="big">کدام درس‌ها را می‌خوانی؟</h1><p class="lead">درس‌های ضعیف‌تر را مشخص کن تا وقت بیشتری بگیرند.</p>' +
+        '<div class="chips">' + presetsFor(d).map(function (n) { return '<button class="chip" data-act="subj" data-v="' + esc(n) + '" aria-pressed="' + (names.indexOf(n) >= 0) + '">' + esc(n) + '</button>'; }).join('') + '</div>' +
+        '<div class="field"><label for="ob-custom">درس دیگر</label><div style="display:flex;gap:8px"><input id="ob-custom" placeholder="مثلاً زبان تخصصی" autocomplete="off"><button class="btn" data-act="addcustom" aria-label="افزودن">' + ic('plus') + '</button></div></div>' +
+        d.subjects.map(function (x, i) {
+          return '<div class="sub-card"><div class="hd"><b>' + esc(x.name) + '</b><button data-act="rmsubj" data-i="' + i + '" aria-label="حذف ' + esc(x.name) + '">' + ic('x') + '</button></div><div class="seg-ctl">' +
+            [[1, 'ضعیف‌ترم'], [2, 'متوسط'], [3, 'قوی‌ام']].map(function (l) { return '<button data-act="level" data-i="' + i + '" data-v="' + l[0] + '" aria-pressed="' + (x.level === l[0]) + '">' + l[1] + '</button>'; }).join('') + '</div></div>';
+        }).join('');
+      canNext = d.subjects.length > 0;
+    } else if (s === 2) {
+      body = '<h1 class="big">چه روزها و چقدر وقت داری؟</h1><div class="field"><span class="lab2">روزهای درس خواندن</span><div class="chips">' +
+        P.DAYS.map(function (n, i) { return '<button class="chip" data-act="dayon" data-i="' + i + '" aria-pressed="' + !!d.days[i] + '">' + esc(n) + '</button>'; }).join('') + '</div></div>' +
+        '<div class="field"><div class="row-between"><label for="ob-min">زمان هر روز</label><b class="num" id="ob-min-v">' + mins(d.minutes) + '</b></div><input class="range" type="range" id="ob-min" min="30" max="360" step="15" value="' + d.minutes + '"></div>' +
+        '<div class="field"><label for="ob-start">ساعت شروع</label><input id="ob-start" type="time" value="' + esc(d.start) + '" style="direction:ltr;text-align:right"></div>' +
+        '<div class="field"><span class="lab2">طول هر جلسه</span><div class="seg-ctl">' + [30, 45, 60, 90].map(function (v) { return '<button data-act="sess" data-v="' + v + '" aria-pressed="' + (d.session === v) + '">' + fa(v) + ' دقیقه</button>'; }).join('') + '</div></div>';
+      canNext = d.days.some(Boolean);
+    } else {
+      body = '<h1 class="big">هدفت چیست؟</h1><p class="lead">اگر امتحان نزدیکی داری تاریخش را بنویس تا برنامه شکل امتحانی بگیرد. این بخش اختیاری است.</p>' +
+        '<div class="field"><label for="ob-exam">تاریخ امتحان (میلادی)</label><input id="ob-exam" type="date" value="' + esc(d.examDate) + '" style="direction:ltr;text-align:right"></div>' +
+        '<p class="note">اگر برنامه را با هوش مصنوعی بسازی، همین اطلاعات به آن داده می‌شود. ساخت سریع بدون اینترنت و بدون کلید هم کار می‌کند.</p>';
+    }
+    var foot = '<div class="foot">' + (s > 0 ? '<button class="btn ghost" data-act="obback">قبلی</button>' : '') +
+      (s < 3 ? '<button class="btn amber" data-act="obnext"' + (canNext ? '' : ' disabled') + '>بعدی</button>'
+        : '<button class="btn navy" data-act="obfinish">ساخت سریع</button>' + '<button class="btn amber" data-act="obfinish" data-ai="1">ساخت با هوش مصنوعی</button>') + '</div>';
+    return '<div class="overlay" role="dialog" aria-modal="true">' + top + steps + '<div class="body">' + body + '</div>' + foot + '</div>';
+  }
+
+  function settingsHTML() {
+    var st = S.settings, pr = AI.PRESETS[st.provider] || AI.PRESETS.openai;
+    return '<div class="overlay" role="dialog" aria-modal="true"><div class="top"><div class="logo">تنظیمات</div><button class="icon-btn" data-act="close" aria-label="بستن">' + ic('x') + '</button></div><div class="body">' +
+      '<section class="card" style="display:flex;flex-direction:column;gap:12px"><b>هوش مصنوعی</b><p class="note">کلید فقط روی همین گوشی ذخیره می‌شود و مستقیم به سرویسی که انتخاب می‌کنی فرستاده می‌شود.</p>' +
+      '<div class="seg-ctl">' + Object.keys(AI.PRESETS).map(function (k) { return '<button data-act="prov" data-v="' + k + '" aria-pressed="' + (st.provider === k) + '">' + esc(AI.PRESETS[k].label) + '</button>'; }).join('') + '</div>' +
+      '<div class="field"><label for="st-key">کلید API</label><input id="st-key" type="password" value="' + esc(st.apiKey) + '" autocomplete="off" style="direction:ltr;text-align:left"></div>' +
+      '<div class="field"><label for="st-url">آدرس سرویس</label><input id="st-url" value="' + esc(st.baseUrl) + '" placeholder="' + esc(pr.baseUrl) + '" style="direction:ltr;text-align:left"></div>' +
+      '<div class="field"><label for="st-model">مدل</label><input id="st-model" value="' + esc(st.model) + '" placeholder="' + esc(pr.model) + '" style="direction:ltr;text-align:left"></div>' +
+      '<div class="field"><span class="lab2">کلید پشتیبان (وقتی سهمیه‌ی اصلی تمام شد خودکار استفاده می‌شود)</span></div>' +
+      '<div class="field"><label for="st-fbkey">کلید پشتیبان</label><input id="st-fbkey" type="password" value="' + esc(st.fbKey || '') + '" autocomplete="off" style="direction:ltr;text-align:left"></div>' +
+      '<div class="field"><label for="st-fburl">آدرس سرویس پشتیبان</label><input id="st-fburl" value="' + esc(st.fbUrl || '') + '" placeholder="https://api.groq.com/openai/v1" style="direction:ltr;text-align:left"></div>' +
+      '<div class="field"><label for="st-fbmodel">مدل پشتیبان</label><input id="st-fbmodel" value="' + esc(st.fbModel || '') + '" placeholder="openai/gpt-oss-120b" style="direction:ltr;text-align:left"></div>' +
+      '<button class="btn ghost block" data-act="fbgroq">پر کردن آدرس و مدل با Groq</button>' +
+      '<button class="btn navy block" data-act="testai">' + ic('spark') + ' آزمایش اتصال</button>' +
+      (ui.testMsg ? '<div class="status ' + (ui.testMsg.ok ? 'ok' : 'bad') + '">' + esc(ui.testMsg.text) + '</div>' : '') + '</section>' +
+      '<section class="card" style="display:flex;flex-direction:column;gap:10px"><b>ظاهر</b><div class="seg-ctl">' +
+      [['auto', 'خودکار'], ['light', 'روشن'], ['dark', 'تیره']].map(function (t) { return '<button data-act="theme" data-v="' + t[0] + '" aria-pressed="' + (st.theme === t[0]) + '">' + t[1] + '</button>'; }).join('') + '</div>' +
+      '<span class="lab2">رنگ اصلی</span><div class="swatches">' + Object.keys(ACCENT_NAMES).map(function (k) { return '<button class="sw" data-act="accent" data-v="' + k + '" aria-label="' + ACCENT_NAMES[k] + '" aria-pressed="' + (st.accent === k || (!st.accent && k === 'amber')) + '" style="background:' + (ACCENTS[k] || '#FF8A1F') + '"></button>'; }).join('') + '</div></section>' +
+      '<section class="card" style="display:flex;flex-direction:column;gap:10px"><div class="row-between"><b>هدف هفتگی</b><b class="num" id="goal-v">' + fa(S.goalHours || 10) + ' ساعت</b></div><input class="range" type="range" id="st-goal" min="2" max="40" step="1" value="' + (S.goalHours || 10) + '"><p class="note">هر هفته چند ساعت مطالعه می‌خواهی؟</p></section>' +
+      '<section class="card" style="display:flex;flex-direction:column;gap:10px"><b>یادآوری روزانه</b><p class="note">هر روز سر ساعت انتخابی یک اعلان می‌آید (فقط در اپ اندروید).</p><div class="row-between"><div class="seg-ctl" style="flex:1">' +
+      '<button data-act="remon" data-v="1" aria-pressed="' + !!S.reminder.on + '">روشن</button><button data-act="remon" data-v="0" aria-pressed="' + !S.reminder.on + '">خاموش</button></div>' +
+      '<input id="st-rem" type="time" value="' + esc(S.reminder.time) + '" style="direction:ltr;width:8.5rem;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px"></div></section>' +
+      '<section class="card" style="display:flex;flex-direction:column;gap:10px"><b>اطلاعات من</b>' +
+      '<button class="btn block" data-act="onboard">ویرایش مشخصات و درس‌ها</button>' +
+      '<button class="btn block" data-act="export">کپی پشتیبان از داده‌ها</button>' +
+      '<div class="field"><label for="st-import">بازگردانی پشتیبان</label><textarea id="st-import" rows="2" style="direction:ltr;text-align:left" placeholder="متن پشتیبان را اینجا بچسبان"></textarea></div><button class="btn block" data-act="import">بازگردانی</button>' +
+      '<button class="btn danger block" data-act="reset" id="reset-btn">پاک کردن همه‌ی داده‌ها</button></section>' +
+      '</div></div>';
+  }
+
+  function focusHTML() {
+    var f = focus, r = 100, C = 2 * Math.PI * r;
+    return '<div class="overlay focus" role="dialog" aria-modal="true"><div style="opacity:.8">' + esc(f.subject) + '</div>' +
+      '<div class="big-ring"><svg viewBox="0 0 220 220" style="width:100%;height:100%" aria-hidden="true"><circle class="track" cx="110" cy="110" r="' + r + '"/><circle class="val" id="f-val" cx="110" cy="110" r="' + r + '" stroke-dasharray="0 ' + C.toFixed(1) + '" transform="rotate(-90 110 110)"/></svg><div class="t"><b id="f-time">00:00</b></div></div>' +
+      '<div style="max-width:30ch;opacity:.8">' + esc(f.task) + '</div>' +
+      '<div class="seg-ctl snd">' + [['off', 'بی‌صدا'], ['rain', 'باران'], ['brown', 'نویز آرام']].map(function (x) { return '<button data-act="fsnd" data-v="' + x[0] + '" aria-pressed="' + (Snd.kind === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div>' +
+      '<div class="acts"><button class="btn amber" data-act="fpause" id="f-pause">توقف</button><button class="btn ghost" data-act="ffinish">تمام شد</button><button class="btn ghost" data-act="fcancel">بستن</button></div></div>';
+  }
+  function tickFocus() {
+    if (!focus) return;
+    var now = Date.now();
+    var elapsed = focus.acc + (focus.running ? now - focus.t0 : 0);
+    var left = Math.max(0, focus.total - elapsed);
+    var tEl = document.getElementById('f-time'), vEl = document.getElementById('f-val');
+    if (tEl) { var s = Math.ceil(left / 1000); tEl.textContent = fa(('0' + Math.floor(s / 60)).slice(-2) + ':' + ('0' + (s % 60)).slice(-2)); tEl.style.direction = 'ltr'; }
+    if (vEl) { var C = 2 * Math.PI * 100; vEl.setAttribute('stroke-dasharray', (C * elapsed / focus.total).toFixed(1) + ' ' + C.toFixed(1)); }
+    if (left <= 0 && focus.running) { focus.running = false; finishFocus(true); }
+  }
+  function startFocus(id) {
+    var di = P.todayIdx(), it = dayPlan(di).items.filter(function (x) { return x.id === id; })[0];
+    if (!it) return;
+    var m = P.span(it.time) || 25;
+    focus = { id: id, subject: it.subject, task: it.task, total: m * 60000, acc: 0, t0: Date.now(), running: true, minutes: m, timer: setInterval(tickFocus, 500) };
+    ui.overlay = 'focus'; render(); tickFocus();
+  }
+  function startFocusFree(subject, dur) {
+    focus = { id: null, subject: subject || 'تمرکز آزاد', task: 'گوشی را کنار بگذار و فقط روی یک کار تمرکز کن.', total: dur * 60000, acc: 0, t0: Date.now(), running: true, minutes: dur, timer: setInterval(tickFocus, 500) };
+    ui.overlay = 'focus'; render(); tickFocus();
+  }
+  function stopFocusTimer() { if (focus && focus.timer) clearInterval(focus.timer); }
+  function finishFocus(mark) {
+    if (!focus) return;
+    stopFocusTimer();
+    var elapsed = focus.acc + (focus.running ? Date.now() - focus.t0 : 0);
+    var spent = Math.round(Math.min(elapsed, focus.total) / 60000);
+    var day = P.iso(new Date());
+    Snd.stop();
+    var xp0 = xpTotal(), fsub = focus.subject;
+    if (spent > 0) { S.focus[day] = (S.focus[day] || 0) + spent; S.focusSub[fsub] = (S.focusSub[fsub] || 0) + spent; }
+    if (mark && focus.id) S.done[dateKey(P.todayIdx()) + '|' + focus.id] = 1;
+    focus = null; ui.overlay = null; save(); render();
+    if (mark) { confetti(); toast('آفرین! ' + fa(spent) + ' دقیقه تمرکز'); rewardCheck(xp0, false); } else toast('ذخیره شد');
+  }
+
+  /* ---------- render ---------- */
+  var TITLES = { today: 'امروز', week: 'هفته', coach: 'مربی', tools: 'ابزارها', progress: 'پیشرفت' };
+  var NAVICONS = { today: 'home', week: 'cal', coach: 'chat', tools: 'tools', progress: 'chart' };
+  function render() {
+    var enter = ui._v !== ui.view; ui._v = ui.view;
+    var content = ui.view === 'today' ? todayView() : ui.view === 'week' ? weekView() : ui.view === 'coach' ? coachView() : ui.view === 'tools' ? toolsView() : progressView();
+    var composer = ui.view === 'coach' ? '<form class="composer" id="cform"><textarea id="cin" rows="1" placeholder="سؤالت را بنویس…" aria-label="پیام"></textarea><button class="send" type="submit" aria-label="ارسال"' + (ui.busy ? ' disabled' : '') + '>' + ic('send') + '</button></form>' : '';
+    $app.innerHTML = '<div class="top"><div class="logo">ami<i>core</i></div><button class="icon-btn" data-act="settings" aria-label="تنظیمات">' + ic('gear') + '</button></div>' +
+      '<main id="main"' + (enter ? ' class="enter"' : '') + '>' + content + '</main>' + composer +
+      '<nav class="tabs" aria-label="بخش‌ها">' + Object.keys(TITLES).map(function (k) { return '<button data-act="nav" data-v="' + k + '" aria-current="' + (ui.view === k) + '">' + ic(NAVICONS[k]) + '<span>' + TITLES[k] + '</span></button>'; }).join('') + '</nav>' +
+      overlayHTML();
+    if (ui.view === 'coach') { var m = document.getElementById('main'); if (m) m.scrollTop = m.scrollHeight; }
+  }
+  function renderChat() {
+    var c = document.getElementById('chat'), m = document.getElementById('main'), b = document.querySelector('#cform .send');
+    if (!c) { render(); return; }
+    c.innerHTML = S.chat.length || ui.busy ? chatHTML() : c.innerHTML;
+    if (b) b.disabled = ui.busy;
+    if (m) m.scrollTop = m.scrollHeight;
+  }
+
+  /* ---------- AI actions ---------- */
+  function aiCtx() {
+    var p = S.profile || {};
+    return { profile: { name: p.name, grade: p.grade, field: p.field, subjects: p.subjects, studyDays: p.days ? P.DAYS.filter(function (_, i) { return p.days[i]; }) : null, minutesPerStudyDay: p.minutes, startTime: p.start, sessionMinutes: p.session, examDate: (nextExam() ? P.iso(new Date(Date.now() + nextExam().days * 86400000)) : null), exams: (S.exams || []).map(function (e) { return { name: e.name, date: e.date }; }), openHomework: openHW().map(function (h) { return h.text; }).slice(0, 8) },
+      plan: S.plan, today: P.DAYS[P.todayIdx()] };
+  }
+  function aiError(e) {
+    var m = { no_key: 'اول در تنظیمات کلید هوش مصنوعی را وارد کن.', auth: 'کلید قبول نشد. کلید و آدرس سرویس را بررسی کن.', rate: 'درخواست‌ها زیاد شد. کمی بعد دوباره امتحان کن.', model: 'مدل یا آدرس سرویس درست نیست.', network: 'اتصال اینترنت برقرار نیست یا سرویس در دسترس نیست.', timeout: 'جواب دیر رسید. دوباره امتحان کن.', bad_reply: 'جواب قابل فهم نبود. دوباره امتحان کن.', http: 'سرویس خطا داد. کمی بعد دوباره امتحان کن.' };
+    return m[e && e.code] || 'مشکلی پیش آمد. دوباره امتحان کن.';
+  }
+  function applyPlan(raw) {
+    var np = P.normalize(raw);
+    if (!np) return false;
+    S.plan = np; save(); return true;
+  }
+  async function aiPlan(note) {
+    if (!hasAI()) { toast('اول در تنظیمات کلید هوش مصنوعی را وارد کن'); ui.overlay = 'settings'; render(); return false; }
+    ui.busy = true; render();
+    try {
+      var r = await AI.makePlan(S.settings, aiCtx(), note);
+      if (!applyPlan(r.plan)) throw Object.assign(new Error('bad'), { code: 'bad_reply' });
+      ui.busy = false; render(); toast('برنامه‌ی جدید آماده شد'); return true;
+    } catch (e) { ui.busy = false; render(); toast(aiError(e)); return false; }
+  }
+  function offlinePlan() {
+    var p = S.profile;
+    var minutesPerDay = P.DAYS.map(function (_, i) { return p.days[i] ? p.minutes : 0; });
+    var plan = P.build({ subjects: p.subjects, minutesPerDay: minutesPerDay, start: p.start, session: p.session, rest: p.rest, examDate: p.examDate });
+    S.plan = plan; save();
+  }
+  async function sendChat(text) {
+    text = (text || '').trim();
+    if (!text || ui.busy) return;
+    S.chat.push({ role: 'user', content: text });
+    if (!hasAI()) { S.chat.push({ role: 'assistant', content: 'برای جواب دادن به کلید هوش مصنوعی نیاز دارم. از تنظیمات وارد کن.', err: true }); save(); renderChat(); return; }
+    ui.busy = true; save(); renderChat();
+    try {
+      var hist = S.chat.filter(function (m) { return !m.err; }).map(function (m) { return { role: m.role, content: m.content }; });
+      var r = await AI.chat(S.settings, aiCtx(), hist);
+      S.chat.push({ role: 'assistant', content: r.reply });
+      var changed = r.plan && applyPlan(r.plan);
+      ui.busy = false; save(); renderChat();
+      if (changed) toast('برنامه‌ات به‌روز شد');
+    } catch (e) {
+      ui.busy = false; S.chat.push({ role: 'assistant', content: aiError(e), err: true }); save(); renderChat();
+    }
+  }
+
+  /* ---------- tool actions ---------- */
+  async function runTutor() {
+    var need = tu.mode === 'feynman' ? tu.text.trim() && tu.mine.trim() : tu.text.trim();
+    if (!need) { tu.err = tu.mode === 'feynman' ? 'مبحث و توضیح خودت را بنویس.' : 'اول متن را بنویس.'; render(); return; }
+    tu.err = ''; tu.busy = true; tu.res = null; tu.hintN = 1; tu.showSol = false; render();
+    try {
+      var p = S.profile || {}, mode = tu.mode;
+      var r = await AI.tutor(S.settings, mode, { grade: p.grade, field: p.field, subject: tu.subject.trim(), text: tu.text.trim(), mine: tu.mine.trim() });
+      r.mode = mode; tu.res = r;
+    } catch (e) { tu.err = aiError(e); }
+    tu.busy = false; if (ui.overlay === 'tutor') render();
+  }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  async function applyReminder() {
+    var LN = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
+    if (!LN) { toast('یادآوری فقط در اپ اندروید کار می‌کند'); return; }
+    try {
+      await LN.cancel({ notifications: [{ id: 1 }] });
+      if (!S.reminder.on) return;
+      var perm = await LN.requestPermissions();
+      if (perm.display !== 'granted') { S.reminder.on = false; save(); render(); toast('اجازه‌ی اعلان داده نشد'); return; }
+      var t = (S.reminder.time || '16:00').split(':');
+      await LN.schedule({ notifications: [{ id: 1, title: 'وقت درس خواندن است', body: 'برنامه‌ی امروزت منتظر توست.', schedule: { on: { hour: +t[0], minute: +t[1] }, allowWhileIdle: true } }] });
+      toast('یادآوری فعال شد');
+    } catch (e) { toast('یادآوری تنظیم نشد'); }
+  }
+  var qTimer = null;
+  function stopQTimer() { if (qTimer) clearInterval(qTimer); qTimer = null; }
+  function startQTimer() {
+    stopQTimer(); if (!qz || !qz.timed) return;
+    qz.deadline = Date.now() + (qz.n || qz.qs.length) * 60000;
+    qTimer = setInterval(function () {
+      if (!qz || qz.phase !== 'run' || ui.overlay !== 'quiz') { stopQTimer(); return; }
+      var left = Math.max(0, Math.ceil((qz.deadline - Date.now()) / 1000)), el = document.getElementById('qt');
+      if (el) { el.textContent = fa(Math.floor(left / 60) + ':' + ('0' + left % 60).slice(-2)); el.classList.toggle('low', left <= 15); }
+      if (left <= 0) { for (var k = qz.picked == null ? qz.i : qz.i + 1; k < qz.qs.length; k++) qz.wrong.push(qz.qs[k]); toast('زمان تمام شد'); finishQuiz(); render(); }
+    }, 500);
+  }
+  function finishQuiz() {
+    stopQTimer(); qz.phase = 'done';
+    if (qz.daily && qz.qs.length) { S.dailyDone = S.dailyDone || {}; S.dailyDone[P.iso(new Date())] = 1; }
+    if (qz.mode !== 'mistakes') { S.quizzes.push({ date: P.iso(new Date()), subject: qz.subject, topic: qz.topic, score: qz.score, total: qz.qs.length }); S.quizzes = S.quizzes.slice(-60); }
+    save(); if (qz.score / qz.qs.length >= 0.8) confetti();
+  }
+  function runQuiz() {
+    var q = qz;
+    if (!q.subject.trim()) { q.err = 'اسم درس را بنویس.'; render(); return; }
+    q.err = ''; q.phase = 'loading'; q.qs = []; q.i = 0; q.picked = null; q.score = 0; q.wrong = []; q.waiting = false;
+    var p = S.profile || {}, k = Math.max(1, Math.ceil(q.n / 4)), sizes = [], left = q.n, b;
+    for (b = 0; b < k; b++) { var sz = Math.ceil(left / (k - b)); sizes.push(sz); left -= sz; }
+    q.parts = k; q.done = 0; q.failed = 0; q.loadingMore = true; var started = false, lastErr = null;
+    render();
+    sizes.forEach(function (size, idx) {
+      AI.quizBatch(S.settings, { grade: p.grade, field: p.field, subject: q.subject.trim(), topic: q.topic.trim(), source: q.source || '', n: size, level: q.level, part: idx + 1, parts: k })
+        .then(function (list) {
+          if (qz !== q || q.phase === 'done') return;
+          list.forEach(function (x) { q.qs.push(x); });
+          if (!started) { started = true; q.phase = 'run'; startQTimer(); if (ui.overlay === 'quiz') render(); }
+          else if (q.waiting) { q.waiting = false; q.i++; q.picked = null; if (ui.overlay === 'quiz') render(); }
+        }, function (e) { q.failed++; lastErr = e; })
+        .then(function () {
+          if (qz !== q || q.phase === 'done') return;
+          q.done++;
+          if (q.done === k) {
+            q.loadingMore = false; q.n = q.qs.length || q.n;
+            if (!started) { q.phase = 'setup'; q.err = aiError(lastErr); }
+            else if (q.waiting) { q.waiting = false; finishQuiz(); }
+            if (ui.overlay === 'quiz') render();
+          }
+        });
+    });
+  }
+  async function runSumm() {
+    if (!sm.text.trim()) { sm.err = 'اول متن درس را بچسبان.'; render(); return; }
+    sm.err = ''; sm.busy = true; render();
+    try { sm.res = await AI.summarize(S.settings, sm.text); }
+    catch (e) { sm.err = aiError(e); }
+    sm.busy = false; if (ui.overlay === 'summ') render();
+  }
+  async function runReport() {
+    if (!hasAI()) { ui.overlay = 'settings'; render(); return; }
+    ui.rbusy = true; render();
+    try {
+      var stats = P.weekStats(S.plan, S.done), tp = 0, td = 0, by = {};
+      stats.forEach(function (x) { tp += x.planned; td += x.done; Object.keys(x.bySubject).forEach(function (k) { by[k] = (by[k] || 0) + x.bySubject[k]; }); });
+      var wk = P.weekStart();
+      var text = await AI.report(S.settings, { plannedMinutes: tp, doneMinutes: td, doneBySubject: by, streakDays: streak(), openHomework: openHW().length,
+        quizzes: (S.quizzes || []).filter(function (x) { return x.date >= wk; }).map(function (x) { return { subject: x.subject, score: x.score, total: x.total }; }), nextExamDays: nextExam() ? nextExam().days : null });
+      S.report = { wk: wk, text: text }; save();
+    } catch (e) { toast(aiError(e)); }
+    ui.rbusy = false; render();
+  }
+  function dailyDone() { return !!(S.dailyDone && S.dailyDone[P.iso(new Date())]); }
+  function startDaily() {
+    var subs = (S.profile && S.profile.subjects) || [];
+    var pick = subs.filter(function (x) { return x.level === 1; })[0] || subs[Math.floor(Math.random() * subs.length)] || { name: 'عمومی' };
+    openTool('quiz');
+    qz.subject = pick.name; qz.n = 3; qz.level = 'سخت'; qz.daily = true; qz.timed = false; qz.source = '';
+    if (!hasAI()) { render(); return; }
+    runQuiz();
+  }
+  function openTool(v) {
+    if (v === 'daily') { startDaily(); return; }
+    if (v === 'coach') { ui.view = 'coach'; ui.overlay = null; render(); return; }
+    var first = (S.profile && S.profile.subjects[0] && S.profile.subjects[0].name) || '';
+    if (v === 'free') { fr = { subject: first, dur: 25 }; }
+    if (v === 'tutor') { if (!tu) tu = { mode: 'solve', subject: first, text: '', mine: '', busy: false, res: null, hintN: 1, showSol: false, err: '' }; }
+    if (v === 'topics') { tp = { mode: 'list', queue: [], f: { subject: first, name: '', note: '' } }; }
+    if (v === 'grades') { gr = { kind: 'exam', subject: first, score: '', total: '', correct: '', wrong: '', date: P.iso(new Date()), k: 1 }; }
+    if (v === 'additem') { var dd = dayPlan(ui.selDay); ni = { subject: first, task: '', start: P.fmt(Math.max(P.endMin(dd) + 10, 16 * 60)), dur: 45 }; }
+    if (v === 'mistakes') {
+      if (!(S.mistakes || []).length) { toast('هنوز اشتباهی ثبت نشده'); return; }
+      var pool = S.mistakes.slice().sort(function () { return Math.random() - .5; }).slice(0, 10);
+      qz = { phase: 'run', mode: 'mistakes', subject: 'مرور اشتباه‌ها', topic: '', n: pool.length, level: '', qs: pool, i: 0, picked: null, score: 0, wrong: [], err: '' };
+      ui.overlay = 'quiz'; render(); return;
+    }
+    if (v === 'quiz') { qz = { phase: 'setup', subject: (S.profile && S.profile.subjects[0] && S.profile.subjects[0].name) || '', topic: '', n: 5, level: 'سخت', source: '', daily: false, qs: [], i: 0, picked: null, score: 0, wrong: [], err: '' }; }
+    if (v === 'summ') { sm.err = ''; }
+    if (v === 'cards') { cd = { queue: dueCards().sort(function () { return Math.random() - .5; }), flip: false }; }
+    ui.overlay = v; render();
+  }
+
+  /* ---------- events ---------- */
+  $app.addEventListener('click', function (ev) {
+    var t = ev.target.closest('[data-act]'); if (!t) return;
+    var a = t.dataset.act, v = t.dataset.v;
+    switch (a) {
+      case 'nav': ui.view = v; render(); break;
+      case 'settings': ui.overlay = 'settings'; ui.testMsg = null; render(); break;
+      case 'close': stopQTimer(); ui.overlay = null; render(); break;
+      case 'day': ui.selDay = +t.dataset.i; render(); break;
+      case 'toggle': toggleItem(t.dataset.date, t.dataset.id); break;
+      case 'comp': { if (!S.plan) break; var r = P.compensate(S.plan, S.done, P.todayIdx()); if (r.moved) { save(); render(); toast(fa(r.added) + ' بخش به روزهای بعد منتقل شد' + (r.left ? '؛ ' + fa(r.left) + ' بخش جا نشد' : '')); } else toast(r.left ? 'جای خالی در روزهای بعد نیست' : 'بخش عقب‌افتاده‌ای نداری'); break; }
+      case 'copyplan': { var tx2 = planText(); try { navigator.clipboard.writeText(tx2).then(function () { toast('برنامه کپی شد'); }, function () { toast('کپی نشد'); }); } catch (e) { toast('کپی نشد'); } break; }
+      case 'delitem': P.removeItem(S.plan, +t.dataset.di, t.dataset.id); save(); render(); break;
+      case 'nisub': ni.subject = v; render(); break;
+      case 'nidur': ni.dur = +v; render(); break;
+      case 'niadd': {
+        var sm0 = P.parse(ni.start); if (!ni.subject.trim()) { toast('اسم درس را بنویس'); break; } if (sm0 == null) { toast('ساعت شروع را انتخاب کن'); break; }
+        P.addItem(S.plan, ui.selDay, { time: P.fmt(sm0) + '-' + P.fmt(sm0 + ni.dur), subject: ni.subject.trim(), task: ni.task.trim() || 'مطالعه و تمرین' });
+        save(); ui.overlay = null; render(); toast('به برنامه اضافه شد'); break;
+      }
+      case 'tumode': tu.mode = v; tu.res = null; tu.err = ''; render(); break;
+      case 'tusub': tu.subject = v; render(); break;
+      case 'tuhint': tu.hintN++; render(); break;
+      case 'tusol': tu.showSol = true; render(); break;
+      case 'tucard': { if (tu.res && tu.res.mnemonic) { S.cards.push({ id: uid(), front: tu.text.slice(0, 120), back: tu.res.mnemonic, box: 0, due: P.iso(new Date()) }); save(); toast('فلش‌کارت ذخیره شد'); } break; }
+      case 'tugo': runTutor(); break;
+      case 'tpsub': tp.f.subject = v; render(); break;
+      case 'tpadd': {
+        if (!tp.f.subject.trim() || !tp.f.name.trim()) { toast('درس و مبحث را بنویس'); break; }
+        S.topics.push({ id: uid(), subject: tp.f.subject.trim(), name: tp.f.name.trim(), note: tp.f.note.trim(), stage: 0, due: addDays(1) });
+        tp.f.name = ''; tp.f.note = ''; save(); render(); toast('ثبت شد؛ اولین مرور فردا'); break;
+      }
+      case 'tpdel': S.topics = S.topics.filter(function (x) { return x.id !== t.dataset.id; }); save(); render(); break;
+      case 'tpstart': tp.mode = 'review'; tp.queue = dueTopics().slice(); render(); break;
+      case 'tpback': tp.mode = 'list'; render(); break;
+      case 'tpr': { var tcur = tp.queue.shift(), real = S.topics.filter(function (x) { return x.id === tcur.id; })[0]; var xt = xpTotal(); if (real) reviewTopic(real, v); save(); render(); if (v !== 'forgot') toast('+۳ امتیاز'); break; }
+      case 'grk': gr.k = +v; render(); break;
+      case 'grkind': gr.kind = v; render(); break;
+      case 'grsub': gr.subject = v; render(); break;
+      case 'gradd': {
+        if (!gr.subject.trim()) { toast('اسم درس را بنویس'); break; }
+        if (gr.kind === 'exam') {
+          var sc = parseFloat(gr.score); if (isNaN(sc) || sc < 0 || sc > 20) { toast('نمره باید بین ۰ و ۲۰ باشد'); break; }
+          S.grades.push({ id: uid(), kind: 'exam', subject: gr.subject.trim(), score: sc, date: gr.date || P.iso(new Date()) });
+        } else {
+          var tt = parseInt(gr.total, 10), cc = parseInt(gr.correct, 10) || 0, ww = parseInt(gr.wrong, 10) || 0;
+          if (!tt || tt < 1 || cc + ww > tt || cc < 0 || ww < 0) { toast('تعداد سؤال‌ها درست نیست'); break; }
+          S.grades.push({ id: uid(), kind: 'test', subject: gr.subject.trim(), total: tt, correct: cc, wrong: ww, date: gr.date || P.iso(new Date()) });
+        }
+        gr.score = ''; gr.total = ''; gr.correct = ''; gr.wrong = ''; save(); render(); toast('ثبت شد'); break;
+      }
+      case 'grdel': S.grades = S.grades.filter(function (g) { return g.id !== t.dataset.id; }); save(); render(); break;
+      case 'fsnd': Snd.start(v); render(); break;
+      case 'frsub': fr.subject = v; render(); break;
+      case 'frdur': fr.dur = +v; render(); break;
+      case 'frstart': startFocusFree(fr.subject.trim() || 'تمرکز آزاد', fr.dur); break;
+      case 'accent': S.settings.accent = v; applyTheme(); save(); render(); break;
+      case 'explan': {
+        var ex = S.exams.filter(function (e) { return e.id === t.dataset.id; })[0]; if (!ex) break;
+        if (!hasAI()) { ui.overlay = 'settings'; render(); break; }
+        ui.exbusy = ex.id; render();
+        AI.examPlan(S.settings, { name: ex.name, days: P.daysUntil(ex.date), subjects: ((S.profile && S.profile.subjects) || []).map(function (x) { return { name: x.name, level: x.level }; }) })
+          .then(function (items) { ex.plan = items; save(); }).catch(function (e) { toast(aiError(e)); }).then(function () { ui.exbusy = null; if (ui.overlay === 'exams') render(); });
+        break;
+      }
+      case 'focus': startFocus(t.dataset.id); break;
+      case 'onboard': startOnboard(); break;
+      case 'rebuild': if (S.profile) { offlinePlan(); render(); toast('برنامه‌ی جدید ساخته شد'); } break;
+      case 'aiplan': aiPlan(); break;
+      case 'ask': sendChat(t.dataset.q); break;
+      case 'grade': ob.d.grade = v; if (['دهم', 'یازدهم', 'دوازدهم', 'کنکوری'].indexOf(v) < 0) ob.d.field = ''; render(); break;
+      case 'field': ob.d.field = v; render(); break;
+      case 'subj': { var i = ob.d.subjects.map(function (x) { return x.name; }).indexOf(v); if (i >= 0) ob.d.subjects.splice(i, 1); else ob.d.subjects.push({ name: v, level: 2 }); render(); break; }
+      case 'addcustom': { var inp = document.getElementById('ob-custom'), n = inp && inp.value.trim(); if (n && !ob.d.subjects.some(function (x) { return x.name === n; })) { ob.d.subjects.push({ name: n, level: 2 }); render(); } break; }
+      case 'rmsubj': ob.d.subjects.splice(+t.dataset.i, 1); render(); break;
+      case 'level': ob.d.subjects[+t.dataset.i].level = +v; render(); break;
+      case 'dayon': ob.d.days[+t.dataset.i] = !ob.d.days[+t.dataset.i]; render(); break;
+      case 'sess': ob.d.session = +v; render(); break;
+      case 'obnext': ob.step++; render(); break;
+      case 'obback': ob.step--; render(); break;
+      case 'obfinish': {
+        var d = ob.d;
+        S.profile = { name: d.name.trim(), grade: d.grade, field: d.field, subjects: d.subjects, days: d.days, minutes: d.minutes, start: d.start || '16:00', session: d.session, rest: d.rest, examDate: d.examDate };
+        offlinePlan(); ui.overlay = null; ui.view = 'today'; ui.selDay = P.todayIdx(); render();
+        if (t.dataset.ai) aiPlan('برنامه را کامل‌تر و دقیق‌تر از حالت پایه بساز.'); else toast('برنامه‌ات آماده شد');
+        break;
+      }
+      case 'fbgroq': readSettings(); S.settings.fbUrl = 'https://api.groq.com/openai/v1'; if (!S.settings.fbModel) S.settings.fbModel = 'openai/gpt-oss-120b'; save(); render(); break;
+      case 'prov': S.settings.provider = v; save(); render(); break;
+      case 'theme': S.settings.theme = v; applyTheme(); save(); render(); break;
+      case 'testai': readSettings(); ui.testMsg = { ok: true, text: 'در حال آزمایش…' }; render();
+        AI.test(S.settings).then(function () { ui.testMsg = { ok: true, text: 'اتصال برقرار است.' }; render(); }).catch(function (e) { ui.testMsg = { ok: false, text: aiError(e) }; render(); }); break;
+      case 'open': openTool(v); break;
+      case 'qsub': qz.subject = v; render(); break;
+      case 'qn': qz.n = +v; render(); break;
+      case 'qnosrc': qz.source = ''; render(); break;
+      case 'qtimed': qz.timed = v === '1'; render(); break;
+      case 'qlevel': qz.level = v; render(); break;
+      case 'qstart': runQuiz(); break;
+      case 'qpick': {
+        var cq = qz.qs[qz.i]; if (qz.picked != null) break; qz.picked = +t.dataset.i;
+        if (qz.picked === cq.answer) { qz.score++; if (qz.mode === 'mistakes') S.mistakes = S.mistakes.filter(function (m) { return m.id !== cq.id; }); }
+        else {
+          qz.wrong.push(cq);
+          if (qz.mode !== 'mistakes' && !S.mistakes.some(function (m) { return m.q === cq.q; })) { S.mistakes.push({ id: uid(), q: cq.q, options: cq.options, answer: cq.answer, explain: cq.explain, subject: qz.subject }); S.mistakes = S.mistakes.slice(-80); }
+        }
+        save(); render(); break;
+      }
+      case 'qnext':
+        if (qz.i + 1 < qz.qs.length) { qz.i++; qz.picked = null; }
+        else if (qz.loadingMore) { qz.waiting = true; }
+        else finishQuiz();
+        render(); break;
+      case 'qagain': qz.phase = 'setup'; render(); break;
+      case 'smgo': runSumm(); break;
+      case 'smquiz': openTool('quiz'); qz.source = sm.text; qz.topic = ''; render(); break;
+      case 'smcards': { var day = P.iso(new Date()); sm.res.cards.forEach(function (c) { S.cards.push({ id: uid(), front: c.front, back: c.back, box: 0, due: day }); }); sm.res.cards = []; save(); render(); toast('کارت‌ها اضافه شد'); break; }
+      case 'cflip': if (cd && cd.queue[0]) { cd.flip = !cd.flip; render(); } break;
+      case 'cyes': case 'cno': {
+        var c = cd.queue.shift(), INT = [1, 3, 7, 16];
+        var real = S.cards.filter(function (x) { return x.id === c.id; })[0];
+        if (real) { var d = new Date(); d.setHours(12, 0, 0, 0); if (a === 'cyes') { real.box = Math.min((real.box || 0) + 1, 3); d.setDate(d.getDate() + INT[real.box]); } else { real.box = 0; } real.due = P.iso(d); }
+        if (a === 'cno') cd.queue.push(Object.assign({}, c)); // see it again this session
+        cd.flip = false; save(); render(); break;
+      }
+      case 'cadd': { var f = document.getElementById('cd-front').value.trim(), bk = document.getElementById('cd-back').value.trim(); if (f && bk) { var card = { id: uid(), front: f, back: bk, box: 0, due: P.iso(new Date()) }; S.cards.push(card); cd.queue.push(card); save(); render(); toast('کارت اضافه شد'); } else toast('سؤال و جواب را بنویس'); break; }
+      case 'hwadd': { var tx = document.getElementById('hw-text').value.trim(); if (tx) { S.homework.push({ id: uid(), text: tx, due: document.getElementById('hw-due').value || '', done: false }); save(); render(); } else toast('متن تکلیف را بنویس'); break; }
+      case 'hwtoggle': S.homework.forEach(function (h) { if (h.id === t.dataset.id) h.done = !h.done; }); save(); render(); break;
+      case 'hwclear': S.homework = S.homework.filter(function (h) { return !h.done; }); save(); render(); break;
+      case 'exadd': { var en = document.getElementById('ex-name').value.trim(), ed = document.getElementById('ex-date').value; if (en && ed) { S.exams.push({ id: uid(), name: en, date: ed }); save(); render(); } else toast('نام و تاریخ را وارد کن'); break; }
+      case 'exdel': S.exams = S.exams.filter(function (e) { return e.id !== t.dataset.id; }); save(); render(); break;
+      case 'report': runReport(); break;
+      case 'parentrep': {
+        var stp = P.weekStats(S.plan, S.done), pp = 0, dd = 0; stp.forEach(function (x) { pp += x.planned; dd += x.done; });
+        var qw = (S.quizzes || []).filter(function (x) { return x.date >= P.weekStart(); }), ne2 = nextExam();
+        var lines = ['گزارش هفته‌ی ' + ((S.profile && S.profile.name) || 'دانش‌آموز') + ' (amicore)', '', 'مطالعه‌ی انجام‌شده: ' + mins(dd) + ' از ' + mins(pp) + ' (' + (pp ? Math.round(dd / pp * 100) : 0) + '٪)', 'روزهای پشت‌سرهم: ' + streak(), 'تمرکز امروز: ' + mins(focusToday()), 'آزمون‌های این هفته: ' + (qw.length ? qw.map(function (x) { return x.subject + ' ' + x.score + '/' + x.total; }).join('، ') : 'ندارد'), 'تکلیف‌های باز: ' + openHW().length, ne2 ? 'امتحان بعدی: ' + ne2.name + '، ' + ne2.days + ' روز دیگر' : ''];
+        try { navigator.clipboard.writeText(fa(lines.filter(function (x) { return x !== ''; }).join('\n'))).then(function () { toast('گزارش کپی شد'); }, function () { toast('کپی نشد'); }); } catch (e) { toast('کپی نشد'); }
+        break;
+      }
+      case 'remon': S.reminder.on = v === '1'; save(); render(); applyReminder(); break;
+      case 'import': {
+        var raw = document.getElementById('st-import').value.trim();
+        try { var o = JSON.parse(raw); ['profile', 'plan', 'done', 'focus', 'homework', 'exams', 'cards', 'quizzes'].forEach(function (k) { if (o[k] != null) S[k] = o[k]; }); save(); ui.overlay = null; render(); toast('پشتیبان بازگردانی شد'); }
+        catch (e) { toast('متن پشتیبان درست نیست'); }
+        break;
+      }
+      case 'export': { var txt = JSON.stringify({ profile: S.profile, plan: S.plan, done: S.done, focus: S.focus, homework: S.homework, exams: S.exams, cards: S.cards, quizzes: S.quizzes }); try { navigator.clipboard.writeText(txt).then(function () { toast('پشتیبان کپی شد'); }, function () { toast('کپی نشد'); }); } catch (e) { toast('کپی نشد'); } break; }
+      case 'reset':
+        if (t.dataset.sure) { try { localStorage.removeItem(KEY); } catch (e) {} S = JSON.parse(JSON.stringify(DEFAULT)); applyTheme(); ui.overlay = null; ui.view = 'today'; render(); }
+        else { t.dataset.sure = '1'; t.textContent = 'مطمئنی؟ دوباره بزن تا همه‌چیز پاک شود'; }
+        break;
+      case 'fpause': if (focus) { if (focus.running) { focus.acc += Date.now() - focus.t0; focus.running = false; t.textContent = 'ادامه'; } else { focus.t0 = Date.now(); focus.running = true; t.textContent = 'توقف'; } } break;
+      case 'ffinish': finishFocus(true); break;
+      case 'fcancel': Snd.stop(); finishFocus(false); break;
+    }
+  });
+
+  function readSettings() {
+    var MAP = { key: 'apiKey', url: 'baseUrl', model: 'model', fbkey: 'fbKey', fburl: 'fbUrl', fbmodel: 'fbModel' };
+    Object.keys(MAP).forEach(function (k) {
+      var el = document.getElementById('st-' + k);
+      if (el) S.settings[MAP[k]] = el.value.trim();
+    });
+    save();
+  }
+  $app.addEventListener('input', function (ev) {
+    var t = ev.target;
+    if (t.id === 'ob-name') ob.d.name = t.value;
+    else if (t.id === 'ob-min') { ob.d.minutes = +t.value; var o = document.getElementById('ob-min-v'); if (o) o.textContent = mins(ob.d.minutes); }
+    else if (t.id === 'ob-start') ob.d.start = t.value;
+    else if (t.id === 'ob-exam') ob.d.examDate = t.value;
+    else if (t.id === 'st-rem') { S.reminder.time = t.value || '16:00'; save(); if (S.reminder.on) applyReminder(); }
+    else if (t.id === 'tu-subject') tu.subject = t.value;
+    else if (t.id === 'tu-text') tu.text = t.value;
+    else if (t.id === 'tu-mine') tu.mine = t.value;
+    else if (t.id === 'tp-subject') tp.f.subject = t.value;
+    else if (t.id === 'tp-name') tp.f.name = t.value;
+    else if (t.id === 'tp-note') tp.f.note = t.value;
+    else if (t.id === 'gr-subject') gr.subject = t.value;
+    else if (t.id === 'gr-score') gr.score = t.value;
+    else if (t.id === 'gr-total') gr.total = t.value;
+    else if (t.id === 'gr-correct') gr.correct = t.value;
+    else if (t.id === 'gr-wrong') gr.wrong = t.value;
+    else if (t.id === 'gr-date') gr.date = t.value;
+    else if (t.id === 'gr-target') { S.targetAvg = +t.value; save(); var tv = document.getElementById('tg-v'); if (tv) tv.textContent = fnum(S.targetAvg); }
+    else if (t.id === 'ni-subject') ni.subject = t.value;
+    else if (t.id === 'ni-task') ni.task = t.value;
+    else if (t.id === 'ni-start') ni.start = t.value;
+    else if (t.id === 'fr-subject') fr.subject = t.value;
+    else if (t.id === 'st-goal') { S.goalHours = +t.value; save(); var gv = document.getElementById('goal-v'); if (gv) gv.textContent = fa(S.goalHours) + ' ساعت'; }
+    else if (t.id === 'qz-subject') qz.subject = t.value;
+    else if (t.id === 'qz-topic') qz.topic = t.value;
+    else if (t.id === 'sm-text') sm.text = t.value;
+    else if (t.id && t.id.indexOf('st-') === 0 && t.id !== 'st-import' && t.id !== 'st-goal') readSettings();
+    else if (t.id === 'cin') { t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 120) + 'px'; }
+  });
+  $app.addEventListener('submit', function (ev) {
+    if (ev.target.id !== 'cform') return;
+    ev.preventDefault();
+    var el = document.getElementById('cin'), v = el.value; el.value = ''; el.style.height = 'auto';
+    sendChat(v);
+  });
+  $app.addEventListener('keydown', function (ev) {
+    if (ev.target.id === 'cin' && ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing) { ev.preventDefault(); document.getElementById('cform').requestSubmit(); }
+  });
+
+  if (!S.profile) { startOnboard(); } else render();
+})();
+
+</script>
+</body>
+</html>
